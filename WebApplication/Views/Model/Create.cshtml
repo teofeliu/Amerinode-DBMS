@@ -1,0 +1,208 @@
+﻿@using WebApplication.Attributes
+
+@using WebApplication.Models.Application;
+@model WebApplication.Models.Application.Model
+@{
+    ViewBag.Title = "Models";
+    ViewBag.SubTitle = "";
+    var id = ViewContext.RouteData.Values["id"];
+    var imagePath = "~/Content/images/models/" + TempData["image"];
+    TempData.Keep("image");
+}
+
+
+@section submenu {left-sidebar-menu-cruds-models}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="box box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">
+                    @if (id == null)
+                {<span>Create New</span>}
+                else
+                {<span>Edit</span>} Model
+            </h3>
+        </div>
+
+        @if (@ViewBag.Message != null)
+            {
+            <div class="box-body">
+                <div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+
+                    <p>
+                        @ViewBag.Message
+                    </p>
+
+                </div>
+            </div>
+        }
+
+        @using (Html.BeginForm("Create", "Model", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="box-body">
+
+                @Html.ValidationSummary(true)
+
+                @if (id != null)
+                {
+                    @Html.HiddenFor(model => model.Id)
+                }
+
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PartNumber, new { @class = "" })
+                    @Html.EditorFor(x => x.PartNumber, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.PartNumber)
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TM, new { @class = "" })
+                    @Html.EditorFor(x => x.TM, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.TM)
+                </div>
+
+
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Name, new { @class = "" })
+                    @Html.EditorFor(x => x.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Name)
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ModelTypeId, new { @class = "" })
+                    @Html.DropDownListFor(x => x.ModelTypeId, (SelectList)ViewBag.ModelTypes, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.ModelTypeId)
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ManufacturerId, new { @class = "" })
+                    @Html.DropDownListFor(x => x.ManufacturerId, (SelectList)ViewBag.Manufacturers, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.ManufacturerId)
+                </div>
+
+
+
+
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Voltage, new { @class = "" })
+                    @Html.EditorFor(x => x.Voltage, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Voltage)
+                </div>
+
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Current, new { @class = "" })
+                    @Html.EditorFor(x => x.Current, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Current)
+                </div>
+
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Description, new { @class = "" })
+                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Description)
+                </div>
+                @*
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Image, new { @class = "" })
+                        @Html.EditorFor(model => model.Image, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                *@
+            </div>
+
+                <div class="box-footer">
+                    @Html.ActionLink("Cancel", "Index", new { }, new { @class = "btn btn-default" })
+                    @if (User.HasPermissions("Model", "Write"))
+                    {
+                        <input type="submit" value="Save" class="btn btn-primary pull-right" />
+                    }
+                </div>
+        }
+    </div>
+</div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        function show(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_img').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2();
+
+            //Datemask dd/mm/yyyy
+            $('#datemask').inputmask("dd/mm/yyyy", { "placeholder": "dd/mm/yyyy" });
+            //Datemask2 mm/dd/yyyy
+            $('#datemask2').inputmask("mm/dd/yyyy", { "placeholder": "mm/dd/yyyy" });
+            //Money Euro
+            $("[data-mask]").inputmask();
+
+            //Date range picker
+            $('#reservation').daterangepicker();
+            //Date range picker with time picker
+            $('#reservationtime').daterangepicker({ timePicker: true, timePickerIncrement: 30, format: 'MM/DD/YYYY h:mm A' });
+            //Date range as a button
+            $('#daterange-btn').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    startDate: moment().subtract(29, 'days'),
+                    endDate: moment()
+                },
+                function (start, end) {
+                    $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                }
+            );
+
+            //iCheck for checkbox and radio inputs
+            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                checkboxClass: 'icheckbox_minimal-blue',
+                radioClass: 'iradio_minimal-blue'
+            });
+            //Red color scheme for iCheck
+            $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+                checkboxClass: 'icheckbox_minimal-red',
+                radioClass: 'iradio_minimal-red'
+            });
+            //Flat red color scheme for iCheck
+            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            });
+
+            //Colorpicker
+            $(".my-colorpicker1").colorpicker();
+            //color picker with addon
+            $(".my-colorpicker2").colorpicker();
+
+            //Timepicker
+            $(".timepicker").timepicker({
+                showInputs: false
+            });
+        });
+
+
+    </script>
+}

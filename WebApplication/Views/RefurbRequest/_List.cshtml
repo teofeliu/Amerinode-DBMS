@@ -1,0 +1,126 @@
+﻿@using WebApplication.Attributes
+
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title">Requests</h3>
+    </div>
+    <div class="box-body table-responsive">
+        <table id="refurbDataTables" class="table table-bordered table-striped"></table>
+    </div>
+    <div class="box-footer">
+        @*
+    	feature disabled by card https://trello.com/c/gErIEnsQ
+        
+	@if (User.HasPermissions("RefurbRequest", "Write"))
+        {
+            <input type="button" class="btn btn-primary" value="New Request" onclick="location.href='@Url.Action("Create", "RefurbRequest")'" />
+        }
+	*@
+
+        @if (User.HasPermissions("RefurbRequest", "Write") 
+                    && ViewContext.RouteData.GetRequiredString("action").ToLowerInvariant().Equals("index"))
+        {
+            @*<a id="exportAsCsv" href="@Url.Action("ExportAllAsCsv")" target="_blank" class="btn btn-default pull-right">Export all data as CSV</a>*@
+
+            <form id="exportAllForm" action="@Url.Action("ExportAllAsCsv")" method="post" target="_blank">
+                @Html.Hidden("filters.DateRequestedStart", "")
+                @Html.Hidden("filters.DateRequestedEnd", "")
+                @Html.Hidden("filters.DateDeliveryStart", "")
+                @Html.Hidden("filters.DateDeliveryEnd", "")
+                @Html.Hidden("filters.Status", "")
+                @Html.Hidden("filters.Origin", "")
+                @Html.Hidden("filters.Destination", "")
+                <button type="button" class="btn btn-default pull-right" onclick="submitExportForm()">Export all data as CSV</button>
+            </form>
+        }
+    </div>
+</div>
+
+
+<script type="text/x-jsrender" id="idColumn">
+    <a href="@Url.Action("Details", "RefurbRequest")/{{:id}}" class="btn btn-link">
+        <i class="fa fa-search"></i>
+        {{:id}}
+    </a>
+</script>
+<script type="text/x-jsrender" id="action-0" data-x-source="received">
+    <a href="@Url.Action("Trial", "RefurbRequest")?RequestId={{:id}}" class="btn btn-success">Trial</a>
+    &nbsp;
+    @if (User.HasPermissions("RefurbRequest", "Delete"))
+    {
+    <a href="@Url.Action("Delete")/{{:id}}" class="btn btn-danger">Cancel</a>
+    }
+</script>
+<script type="text/x-jsrender" id="action-4" data-x-source="sentToCosmetic">
+    <a href="@Url.Action("Cosmetic", "RefurbRequest")?RequestId={{:id}}" class="btn btn-success">Cosmetic</a>
+</script>
+<script type="text/x-jsrender" id="action-2" data-x-source="sentToRepair">
+    <a href="@Url.Action("Repair", "RefurbRequest")?RequestId={{:id}}" class="btn btn-success">Repair</a>
+</script>
+<script type="text/x-jsrender" id="action-9" data-x-source="sentToFinalInspection">
+    <a href="@Url.Action("FinalInspection", "RefurbRequest")?RequestId={{:id}}" class="btn btn-success">Final Inspection</a>
+</script>
+<script type="text/x-jsrender" id="action-6" data-x-source="sentToScrapEvaluation">
+    @* removed by card https://trello.com/c/0ETcbLnb
+    <a href="@Url.Action("Scrap")?RequestId={{:id}}" class="btn btn-success">Scrap</a>*@
+    <span>Waiting scrap</span>
+</script>
+<script type="text/x-jsrender" id="action-10" data-x-source="finalInspection">
+    <span>Waiting delivery</span>
+</script>
+<script type="text/x-jsrender" id="action" data-x-source="whatelse">
+    <span>No More Actions Allowed</span>
+</script>
+
+<script type="text/javascript">
+    function formatDateString(data) {
+        return moment(data).format('DD/MM/YYYY HH:mm');
+    }
+
+
+    function submitExportForm() {
+        var $form = $("#exportAllForm");
+
+
+
+        // getting the date request range
+        $("#filters_DateRequestedStart").val($('#DateRequestedStart').val());
+        $('#filters_DateRequestedEnd').val($('#DateRequestedEnd').val());
+
+        // send the delivery dates if setted
+        var $ddStart = $("#DateDeliveryStart");
+        if ($ddStart.val()) {
+            $("#filters_DateDeliveryStart").removeAttr('disabled').val($ddStart.val());
+            $("#filters_DateDeliveryEnd").removeAttr('disabled').val($("#DateDeliveryEnd").val());
+        } else {
+            $("#filters_DateDeliveryStart").attr('disabled', 'disabled');
+            $("#filters_DateDeliveryEnd").attr('disabled', 'disabled');
+        }
+
+        // check if has at least one status selected
+        var statusData = $('#Status').select2('val');
+        if (statusData) {
+            $('#filters_Status').removeAttr('disabled').val(statusData);
+        } else {
+            $('#filters_Status').attr('disabled', 'disabled');
+        }
+
+        var originData = $('#OriginId').select2('val');
+        if (originData) {
+            $('#filters_Origin').removeAttr('disabled').val(originData);
+        } else {
+            $('#filters_Origin').attr('disabled', 'disabled');
+        }
+
+        var destinationData = $('#DestinationId').select2('val');
+        if (destinationData) {
+            $('#filters_Destination').removeAttr('disabled').val(destinationData);
+        } else {
+            $('#filters_Destination').attr('disabled', 'disabled');
+        }
+
+
+        $form.submit();
+
+    }
+</script>

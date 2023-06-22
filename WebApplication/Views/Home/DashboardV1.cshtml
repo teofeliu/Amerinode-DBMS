@@ -1,0 +1,146 @@
+﻿@using WebApplication.Models.Application
+@{
+    ViewBag.Title = "Requests";
+    ViewBag.SubTitle = "Dashboard";
+}
+
+@section Menu {
+    @Scripts.Render("~/Scripts/Home/DashboardV1/menu")
+}
+
+@*@Styles.Render("~/AdminLTE/plugins/morris/css")*@
+@Styles.Render("~/AdminLTE/plugins/jvectormap/css")
+@Styles.Render("~/AdminLTE/plugins/datepicker/css")
+@Styles.Render("~/AdminLTE/plugins/daterangepicker/css")
+@Styles.Render("~/AdminLTE/plugins/bootstrap-wysihtml5/css")
+
+<div class="box">
+    <div class="box-header with-border">
+        <h3 class="box-title">Batches waiting for action</h3>
+    </div>
+
+    <div class="box-body">
+        <!-- BATCHES -->
+        <div class="row">
+            <!-- WAITING CONFIRMATION -->
+            <div class="col-lg-4 col-xs-6">
+                <div id="AttPendingReview">
+                    @{ Html.RenderPartial("BatchesPendingReview"); }
+                </div>
+            </div>
+            <!-- DIVERGENT -->
+            <div class="col-lg-4 col-xs-6">
+                <div id="AttDivergent">
+                    @{ Html.RenderPartial("BatchesDivergent"); }
+                </div>
+            </div>
+            <!-- CONFERRED -->
+            <div class="col-lg-4 col-xs-6">
+                <div id="AttConferred">
+                    @{ Html.RenderPartial("BatchesConferred"); }
+                </div>
+            </div>
+            <!-- TESTED -->
+            @*<div class="col-lg-3 col-xs-6">
+                    <div id="AttTested">
+                        @{ Html.RenderPartial("BatchesTested"); }
+                    </div>
+                </div>*@
+        </div>
+
+    </div>
+
+</div>
+
+<div class="box">
+    <div class="box-header with-border">
+        <h3 class="box-title">Requests waiting for action</h3>
+    </div>
+
+    <div class="box-body">
+        <!-- REQUESTS -->
+        <div class="row">
+            <!-- TRIAL -->
+            <div class="col-lg-3 col-xs-6">
+                <div id="AttTrial">
+                    @{ Html.RenderPartial("WaitingTrial"); }
+                </div>
+            </div>
+            <!-- REPAIR -->
+            <div class="col-lg-3 col-xs-6">
+                <div id="AttRepair">
+                    @{ Html.RenderPartial("WaitingRepair"); }
+                </div>
+            </div>
+            <!-- COSMETIC -->
+            <div class="col-lg-3 col-xs-6">
+                <div id="AttCosmetic">
+                    @{ Html.RenderPartial("WaitingCosmetic"); }
+                </div>
+            </div>
+            <!-- FINAL INSPECTION -->
+            <div class="col-lg-3 col-xs-6">
+                <div id="AttFinalInspection">
+                    @{ Html.RenderPartial("WaitingFinalInspection"); }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        @*<div class="row">
+                <section class="col-lg- connectedSortable">
+
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs pull-right">
+                            <li class="active"><a href="#revenue-chart" data-toggle="tab">Triage</a></li>
+                            <li><a href="#sales-chart" data-toggle="tab">Repair</a></li>
+                            <li class="pull-left header"><i class="fa fa-inbox"></i> Request Status By Users</li>
+                        </ul>
+                        <div class="tab-content no-padding">
+                            <div class="chart tab-pane active" id="revenue-chart" style="position: relative; height: 300px;"></div>
+                            <div class="chart tab-pane" id="sales-chart" style="position: relative; height: 300px;"></div>
+                        </div>
+                    </div>
+
+                </section>
+            </div>*@
+
+        @section Scripts {
+            @Scripts.Render("~/AdminLTE/plugins/jquery-ui/js")
+            <script>
+                $.widget.bridge('uibutton', $.ui.button);
+            </script>
+            <script type="text/javascript">
+                function attAll(actions) {
+                    for (let i = 0; i < actions.length; i++) {
+                        $.ajax({
+                            url: '@Url.Action("Action", "Home")'.replace('Action', actions[i]),
+                            type: 'post',
+                            cache: false,
+                            async: true,
+                            //data: { id: "frmUser" },
+                            success: function (result) {
+                                $('#' + actions[i]).html(result);
+                            }
+                        });
+                    }
+                }
+                $(document).ready(function () {
+                    var actions = ['AttPendingReview', 'AttConferred', 'AttTested', 'AttDivergent',
+                                    'AttTrial', 'AttRepair', 'AttCosmetic', 'AttFinalInspection'];
+                    attAll(actions);
+                    setInterval(function () { attAll(actions) }, 60000);
+                })
+            </script>
+
+            @Scripts.Render("~/AdminLTE/plugins/bootstrap-wysihtml5/js")
+            @Scripts.Render("~/AdminLTE/plugins/sparkline/js")
+            @Scripts.Render("~/AdminLTE/plugins/jvectormap/js")
+            @Scripts.Render("~/AdminLTE/plugins/daterangepicker/js")
+            @Scripts.Render("~/AdminLTE/plugins/knob/js")
+            @Scripts.Render("~/AdminLTE/plugins/raphael/js")
+            @*@Scripts.Render("~/AdminLTE/plugins/morris/js")*@
+            @Scripts.Render("~/AdminLTE/plugins/datepicker/js")
+            @Scripts.Render("~/Scripts/Home/DashboardV1")
+        }

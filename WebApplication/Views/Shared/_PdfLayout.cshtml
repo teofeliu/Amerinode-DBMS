@@ -1,0 +1,33 @@
+﻿@using WebApplication.Extensions
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Amerinode - Refurb</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    @Styles.Render("~/AdminLTE/plugins/font-awesome/css/font-awesome.min.css")
+    @Styles.Render("~/AdminLTE/bootstrap/css/bootstrap.min.css")
+    @Styles.Render("~/AdminLTE/dist/css/admin-lte.min.css")
+    @Styles.Render("~/AdminLTE/dist/css/skins/_all-skins.min.css")
+    @Styles.Render("~/Styles/Elements/PdfLayout.css")
+
+</head>
+<body class="pdf">
+
+    <div class="header">
+        <div class="row">
+            <div class="col-xs-2">
+                <img src="~/Styles/Images/refurn-alpha.png" style="width: 210px;" alt="Logo" />
+            </div>
+            <div class="col-xs-10">
+                <h2>@ViewBag.Title<br/><small class="text-danger"><strong>@ViewBag.Status</strong></small></h2>
+            </div>
+        </div>
+    </div>
+
+    @RenderBody()
+
+</body>
+</html>

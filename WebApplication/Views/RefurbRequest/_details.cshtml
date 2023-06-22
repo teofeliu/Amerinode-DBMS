@@ -1,0 +1,129 @@
+﻿@using WebApplication.Models.Application;
+<div class="box box">
+    <div class="box-header">
+        <h4 class="box-title">Request Details</h4>
+    </div>
+
+    @if (ViewBag.Request.Batch != null)
+    {
+        <div class="box-body">
+            <div class="form-group">
+                <label class="btn-block">Batch Number</label>
+                <span>@ViewBag.Request.Batch.Id - @ViewBag.Request.Batch.Date</span>
+            </div>
+        </div>
+    }
+
+    <div class="box-body">
+        <div class="form-group">
+            <label class="btn-block">Model</label>
+            <span>@ViewBag.Request.Model.Name</span>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <div class="form-group">
+            <label class="btn-block">Part Number</label>
+            <span>@ViewBag.Request.Model.PartNumber</span>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <div class="form-group">
+            <label class="btn-block">Serial Number</label>
+            <span>@ViewBag.Request.SerialNumber</span>
+        </div>
+    </div>
+
+
+    @if (ViewBag.Request.isDOA)
+    {
+        <div class="box-body">
+            <div class="form-group">
+                <label class="btn-block">Has DOA flag.</label>
+            </div>
+        </div>
+    }
+
+    @if (ViewBag.Warranty != null)
+    {
+        if (((Warranty)@ViewBag.Warranty).InWarranty)
+        {
+            <div class="box-body">
+                <div class="form-group">
+                    <label class="btn-block">Is in warranty.</label>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="box-body">
+                <div class="form-group">
+                    <label class="btn-block">Warranty Denied. Reason:</label>
+                    <span>@ViewBag.Warranty.Description</span>
+                </div>
+            </div>
+        }
+    }
+
+    @if (((RefurbRequest)@ViewBag.Request).RequestFlows.Count > 0)
+    {
+        <div class="box-body">
+            <label>Request History</label>
+            <table class="table table-condensed">
+                <tr>
+                    <th>Request</th>
+                    <th>User</th>
+                    <th>Date</th>
+                    <th>Time Spent</th>
+                    <th>Description</th>
+                </tr>
+                @foreach (var m in ((RefurbRequest)@ViewBag.Request).RequestFlows)
+                {
+                    <tr>
+                        <td>@m.Status</td>
+                        <td>@m.UserId</td>
+                        <td>@m.DateRequested</td>
+                        <td>@m.TimeOnStatus()</td>
+                        <td>@m.Description</td>
+                    </tr>
+
+                }
+            </table>
+        </div>
+    }
+
+    @*@if (((RefurbRequest)@ViewBag.Request).MissingChecklist.Count > 0)
+        {
+            <div class="box-header">
+                <h4 class="box-title">Missing Checklist</h4>
+            </div>
+            <div class="box-body">
+                <ul class="todo-list">
+                    @foreach (MissingChecklist m in ((RefurbRequest)@ViewBag.Request).MissingChecklist)
+                    {
+                        <li>@m.HardwareOverview.Name</li>
+                    }
+
+                </ul>
+            </div>
+        }*@
+
+    @if (((RefurbRequest)@ViewBag.Request).CosmeticChecklist.Count > 0)
+    {
+
+        <div class="box-header">
+            <h4 class="box-title">Cosmetic Checklist</h4>
+        </div>
+        <div class="box-body">
+            <ul class="todo-list">
+                @foreach (CosmeticChecklist m in ((RefurbRequest)@ViewBag.Request).CosmeticChecklist)
+                {
+                    <li>@m.CosmeticOverview.Name</li>
+                }
+            </ul>
+        </div>
+
+    }
+
+</div>

@@ -1,0 +1,43 @@
+﻿@using WebApplication.Models.Application
+@model IEnumerable<WebApplication.Models.Application.Batch>
+@{
+    var type = this.PageData["actionName"];
+}
+
+<div class="box" style="margin-top: 1em;">
+    <div class="box-header with-border">
+        <h3 class="box-title">Latest</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+            @*<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>*@
+        </div>
+    </div>
+    <div class="box-body">
+        <table class="table table-hover table-condensed" style="margin-bottom: 5px">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Id)</th>
+                    <th>@Html.DisplayNameFor(model => model.Model.Name)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Model.Name)</td>
+                            <td><a href="@Url.Action(type, "Batch", new { id = item.Id })">Take Action</a></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+

@@ -1,0 +1,227 @@
+﻿@using WebApplication.Extensions
+@using WebApplication.Attributes
+@using WebApplication.Models.Application
+
+
+
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img src="~/AdminLTE/dist/img/user.svg" class="img-circle" alt="User Image">
+            </div>
+            <div class="pull-left info">
+                <p>@User.Identity.GetUserNameIdentifier()</p>
+                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+        </div>
+        <form action="#" method="get" class="sidebar-form">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search...">
+                <span class="input-group-btn">
+                    <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </span>
+            </div>
+        </form>
+        <ul class="sidebar-menu">
+            <li class="header">MAIN NAVIGATION</li>
+            @if (User.HasPermissions("Charts", "Read"))
+            {
+                <li id="left-sidebar-menu-dashboard" class="treeview">
+                    <a href="#">
+                        <i class="fa fa-dashboard"></i> <span>Dashboard</span> <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li id="left-sidebar-menu-dashboard-dashboardV1"><a href="@Url.Action("DashboardV1", "Home")"><i class="fa fa-circle-o"></i> Requests Dashboard</a></li>
+                        <li id="left-sidebar-menu-dashboard-charts"><a href="@Url.Action("Index", "Charts")"><i class="fa fa-line-chart"></i> Requests Charts</a></li>
+                    </ul>
+                </li>
+            }
+
+            @if (User.HasPermissions("Batch", "Read"))
+            {
+                <li id="left-sidebar-menu-batch" class="treeview">
+                    <a href="#">
+                        <i class="fa fa-cubes"></i> <span>Batches</span> <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li id="left-sidebar-menu-batchStock"><a href="@Url.Action("Details", "BatchStock")"><i class="fa fa-cube"></i> Batches Stock</a></li>
+
+                        <li id="left-sidebar-menu-batch-list"><a href="@Url.Action("Index", "Batch")"><i class="fa fa-cube"></i> Production Batches</a></li>
+                        <li id="left-sidebar-menu-batch-pending"><a href="@Url.Action("ByStatus", "Batch", new { status = BatchStatus.PendingReview })"><i class="fa fa-eye"></i> Batches Pending Review</a>
+                        <li id="left-sidebar-menu-batch-divergent"><a href="@Url.Action("Divergents", "Batch")"><i class="ion ion-android-warning"></i> Diverging Batches</a></li>
+                        <li id="left-sidebar-menu-batch-conferred"><a href="@Url.Action("ByStatus", "Batch", new { status = BatchStatus.Conferred })"><i class="ion ion-eye"></i> Batches Waiting Test</a></li>
+                        <li id="left-sidebar-menu-batch-tested"><a href="@Url.Action("ByStatus", "Batch", new { status = BatchStatus.Tested })"><i class="ion ion-levels"></i> Tested Batches</a></li>
+
+                        @if (User.HasPermissions("BatchDelivery", "Read"))
+                        {
+                            <li id="left-sidebar-menu-batch-delivery"><a href="@Url.Action("Delivery", "Batch", new { })"><i class="ion ion-cube"></i> Delivery Batches</a></li>
+                        }
+
+
+                        @** inserted by card https://trello.com/c/7VW0MhUa *@
+                        <li id="left-sidebar-menu-batch-scrap"><a href="@Url.Action("ScrapBatch", "Batch", new {  })"><i class="ion ion-trash-b"></i> Scrap Batches</a></li>
+                        @** eo inserted by card https://trello.com/c/7VW0MhUa *@
+
+                        @* inserted by card https://trello.com/c/ust0n1m6 *@
+                        <li id="left-sidebar-menu-batch-bga-scrap"><a href="@Url.Action("BgaScrapBatch", "Batch", new {  })"><i class="ion ion-trash-b"></i> BGA Scrap Batches</a></li>
+                        @* eo inserted by card https://trello.com/c/ust0n1m6 *@
+
+                        @if (User.HasPermissions("Batch", "Write"))
+                        {
+                            <li id="left-sidebar-menu-batch-import"><a href="@Url.Action("ImportFromExcel", "Batch")"><i class="fa fa-chevron-right"></i> Import Batch</a></li>
+
+                            <li id="left-sidebar-menu-batch-create"><a href="@Url.Action("CreateNew", "Batch")"><i class="fa fa-star"></i> New Batch</a></li>
+                        }
+                    </ul>
+                </li>
+            }
+
+            @if (User.HasPermissions("RefurbRequest", "Read"))
+            {
+                <li id="left-sidebar-menu-refurbs" class="treeview">
+                    <a href="#">
+                        <i class="fa fa-recycle"></i> <span>Refurb Requests</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li id="left-sidebar-menu-refurbs-requests"><a href="@Url.Action("Index", "RefurbRequest")"><i class="fa fa-list"></i> All Requests</a></li>
+
+                        <li id="left-sidebar-menu-refurbs-requests-trial"><a href="@Url.Action("ByStatus", "RefurbRequest")"><i class="ion ion-ios-alarm"></i> Waiting Trial</a></li>
+                        <li id="left-sidebar-menu-refurbs-requests-repair"><a href="@Url.Action("ByStatus", "RefurbRequest", new { status = RequestFlowStatus.SentToRepair })"><i class="ion ion-hammer"></i> Waiting Repair</a></li>
+                        <li id="left-sidebar-menu-refurbs-requests-cosmetic"><a href="@Url.Action("ByStatus", "RefurbRequest", new { status = RequestFlowStatus.SentToCosmetic })"><i class="ion ion-bowtie"></i> Waiting Cosmetic</a></li>
+                        <li id="left-sidebar-menu-refurbs-requests-hold"><a href="@Url.Action("ByStatus", "CosmeticStatus", new { })"><i class="ion ion-bowtie"></i> On Cosmetic Hold</a></li>
+                        <li id="left-sidebar-menu-refurbs-requests-final-inspection"><a href="@Url.Action("ByStatus", "RefurbRequest", new { status = RequestFlowStatus.SentToFinalInspection })"><i class="ion ion-android-send"></i> Waiting Final Inspection</a></li>
+                        @* Desativado por PMello em 30/05/2017 a pedido do Luiz Varzini Filho
+
+                            <li id="left-sidebar-menu-refurbs-requests-delivered"><a href="@Url.Action("ByStatus", "RefurbRequest", new { status = RequestFlowStatus.FinalInspection })"><i class="ion ion-cube"></i> Waiting Delivery</a></li>*@
+                        <li id="left-sidebar-menu-refurbs-requests-end-of-cycle"><a href="@Url.Action("ByStatus", "RefurbRequest", new { status = RequestFlowStatus.Delivered })"><i class="ion ion-android-radio-button-off"></i> Delivered</a></li>
+                        @if (User.HasPermissions("DOA", "Read"))
+                        {
+                        <li id="left-sidebar-menu-refurbs-requests-doa"><a href="@Url.Action("Index", "DOA")"><i class="fa fa-flag"></i> Flagged as DOA</a></li>
+                        }
+
+                        @*
+                                feature disabled by card https://trello.com/c/gErIEnsQ
+
+                            @if (User.HasPermissions("RefurbRequest", "Write"))
+                                        {
+                                            <li id="left-sidebar-menu-refurbs-new-request"><a href="@Url.Action("Create", "RefurbRequest")"><i class="fa fa-star"></i> New Request</a></li>
+                                        }
+                        *@
+                    </ul>
+                </li>
+            }
+
+            @if ((User.HasPermissions("Parameters", "Read")
+                || User.HasPermissions("Model", "Read")
+                || User.HasPermissions("ModelType", "Read")
+                || User.HasPermissions("Manufacturer", "Read")
+                || User.HasPermissions("RepairType", "Read")
+                || User.HasPermissions("HardwareOverview", "Read")
+                || User.HasPermissions("CosmeticOverview", "Read")
+                || User.HasPermissions("Warranty", "Read")
+                || User.HasPermissions("Supply", "Read")
+                || User.HasPermissions("FunctionalTest", "Read")
+                || User.HasPermissions("CosmeticStatus", "Read")
+                || User.HasPermissions("Warehouse", "Read")
+                || User.HasPermissions("WarehouseRequestStatusFlow", "Read")
+                || User.HasPermissions("DOA", "Read")))
+            {
+                <li id="left-sidebar-menu-cruds" class="treeview">
+                    <a href="#">
+                        <i class="fa fa-table"></i> <span>General Data</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        @if (User.HasPermissions("Parameters", "Read"))
+                        {
+                            <li id="left-sidebar-menu-cruds-pts"><a href="@Url.Action("Index", "Parameters")"><i class="fa fa-fw fa-sliders"></i> Parameters</a></li>
+                        }
+                        @if (User.HasPermissions("Model", "Read"))
+                        {
+                            <li id="left-sidebar-menu-cruds-models"><a href="@Url.Action("Index", "Model")"><i class="ion ion-laptop"></i> Models</a></li>
+                        }
+                        @if (User.HasPermissions("ModelType", "Read"))
+                        {
+                            <li id="left-sidebar-menu-cruds-mt"><a href="@Url.Action("Index", "ModelType")"><i class="ion ion-android-laptop"></i> Model Types</a></li>
+                        }
+
+                        @if (User.HasPermissions("Batches", "Read"))
+                        {
+                            <li id="left-sidebar-menu-cruds-batchesStock"><a href="@Url.Action("Index", "BatchOrders")"><i class="fa fa-eye"></i> Batch Orders</a></li>
+                        }
+
+                        @if (User.HasPermissions("Manufacturer", "Read"))
+                        {
+                            <li id="left-sidebar-menu-cruds-manufacturers"><a href="@Url.Action("Index", "Manufacturer")"><i class="fa fa-industry"></i> Manufacturers</a></li>
+                        }
+                        @if (User.HasPermissions("RepairType", "Read"))
+                        {
+                            <li id="left-sidebar-menu-cruds-rt"><a href="@Url.Action("Index", "RepairType")"><i class="fa fa-wrench "></i> Repair Types</a></li>
+                        }
+                        @*@if (User.HasPermissions("HardwareOverview", "Read"))
+        {
+            <li id="left-sidebar-menu-cruds-ho"><a href="@Url.Action("Index", "HardwareOverview")"><i class="fa fa-cubes"></i> Hardware Overview</a></li>
+        }*@
+                        @if (User.HasPermissions("CosmeticOverview", "Read"))
+                        {
+                            <li id="left-sidebar-menu-cruds-co"><a href="@Url.Action("Index", "CosmeticOverview")"><i class="fa fa-heart"></i> Cosmetic Overview</a></li>
+                        }
+                        @if (User.HasPermissions("Warranty", "Read"))
+                        {
+                            <li id="left-sidebar-menu-cruds-w"><a href="@Url.Action("Index", "Warranty")"><i class="fa fa-pencil-square"></i> Warranties</a></li>
+                        }
+                        @if (User.HasPermissions("Supply", "Read"))
+                        {
+                            <li id="left-sidebar-menu-cruds-supplies"><a href="@Url.Action("Index", "Supply")"><i class="fa fa-refresh"></i> Supplies</a></li>
+                        }
+                        @if (User.HasPermissions("FunctionalTest", "Read"))
+                        {
+                            <li id="left-sidebar-menu-cruds-ft"><a href="@Url.Action("Index", "FunctionalTest")"><i class="ion ion-gear-a"></i> Functional Test</a></li>
+                        }
+                        @if (User.HasPermissions("CosmeticStatus", "Read"))
+                        {
+                            <li id="left-sidebar-menu-cruds-cs"><a href="@Url.Action("Index", "CosmeticStatus")"><i class="ion ion-bowtie"></i> Cosmetic Status</a></li>
+                        }
+                        @if (User.HasPermissions("Warehouse", "Read"))
+                        {
+                            <li id="left-sidebar-menu-cruds-warehouse"><a href="@Url.Action("Index", "Warehouse")"><i class="fa fa-archive"></i> Warehouses</a></li>
+                        }
+                        @if (User.HasPermissions("WarehouseRequestStatusFlow", "Read"))
+                        {
+                            <li id="left-sidebar-menu-cruds-warehouse-s"><a href="@Url.Action("Index", "WarehouseRequestStatusFlow")"><i class="fa fa-exchange"></i> Warehouses Flow Status</a></li>
+                        }
+                        @if (User.HasPermissions("DOA", "Read"))
+                        {
+                            <li id="left-sidebar-menu-refurbs-requests-doa"><a href="@Url.Action("Import", "DOA")"><i class="fa fa-flag"></i> Flagged as DOA</a></li>
+                        }
+                    </ul>
+                </li>
+            }
+
+            @if (User.HasPermissions("User", "Read") || User.HasPermissions("Role", "Read"))
+            {
+                <li id="left-sidebar-menu-auth" class="treeview">
+                    <a href="#">
+                        <i class="fa fa-key"></i> <span>Auth</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        @if (User.HasPermissions("User", "Read"))
+                        {
+                            <li id="left-sidebar-menu-cruds-users"><a href="@Url.Action("Index", "User")"><i class="fa fa-user"></i> Users</a></li>
+                        }
+                        @if (User.HasPermissions("Role", "Read"))
+                        {
+                            <li id="left-sidebar-menu-cruds-roles"><a href="@Url.Action("Index", "Role")"><i class="fa fa-user"></i> Roles</a></li>
+                        }
+                    </ul>
+                </li>
+            }
+
+        </ul>
+    </section>
+</aside>

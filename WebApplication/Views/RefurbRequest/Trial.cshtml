@@ -1,0 +1,172 @@
+﻿@using WebApplication.Attributes
+@using WebApplication.Models.Application
+@model WebApplication.Models.Application.TrialViewModel
+@{
+    ViewBag.Title = "Trial";
+    ViewBag.SubTitle = "Request";
+    var RequestId = ViewContext.RouteData.Values["id"];
+}
+
+
+@section submenu {left-sidebar-menu-refurbs-new-request}
+
+<div class="row">
+    <div class="col-md-10">
+        <div class="box box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Trial for request #@ViewBag.Request.Id</h3>
+            </div>
+
+            @RenderPage("~/Views/RefurbRequest/_details.cshtml")
+
+            @if (@ViewBag.Message != null)
+            {
+                <div class="box-body">
+                    <div class="alert alert-danger alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+                        <p>
+                            @ViewBag.Message
+                        </p>
+
+                    </div>
+                </div>
+            }
+
+            @using (Html.BeginForm("Trial", "RefurbRequest", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+        <div class="box-body">
+            @Html.ValidationSummary(true)
+            @Html.HiddenFor(model => model.RequestId)
+            @Html.HiddenFor(model => model.UserId)
+            @Html.HiddenFor(model => model.Date)
+
+            @if (Model.InWarranty)
+            {
+                <div class="form-group">
+                    @Html.LabelFor(model => model.InWarranty)
+                    <div class="radio">
+                        <label>
+                            @Html.RadioButtonFor(model => model.InWarranty, true)
+                            Yes
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            @Html.RadioButtonFor(model => model.InWarranty, false)
+                            No
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.WarrantyDescription)
+                    @Html.EditorFor(model => model.WarrantyDescription, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    @Html.ValidationMessageFor(model => model.WarrantyDescription)
+                </div>
+            }
+
+            <div class="form-group">
+                <label for="FunctionalTests">Functional Tests</label>
+                <ul class="todo-list">
+                    @foreach (var i in (IQueryable<FunctionalTest>)ViewBag.Components)
+                    {
+                        <li>
+                            <input type="checkbox" value="@i.Id" name="FunctionalTests" class="flat-red">
+                            <span class="text">@i.Name</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Description, new { @class = "" })
+                @Html.EditorFor(x => x.Description, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Description)
+            </div>
+
+           
+
+            <div class="form-group">
+                <label for="CosmeticOverviews">Cosmetics Overviews</label>
+                <ul class="todo-list">
+                    @foreach (var i in (IQueryable<CosmeticOverview>)ViewBag.CosmeticOverviews)
+                    {
+                        <li>
+                            <input type="checkbox" value="@i.Id" name="Overview" class="flat-red">
+                            <span class="text">@i.Name</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.OverviewId, new { @class = "" })
+            @Html.DropDownListFor(x => x.OverviewId, (SelectList)ViewBag.Overviews, new { @class = "form-control" })
+          
+                @Html.Label("OverViews", new { @class = "col-md-2 control-label" })
+              
+                    @Html.DropDownList("Overviews")
+              
+         
+            @Html.ValidationMessageFor(model => model.OverviewId)
+        </div>*@
+
+        </div>
+
+                <div class="box-footer">
+                    <div class="box-btn-group">
+                        @if (User.HasPermissions("RefurbRequest", "Write"))
+                        {
+                            <span class="pull-left">
+                                <input type="submit" name="Action" value="Send to Scrap Evaluation" class="btn btn-danger" />
+                                <input type="submit" name="Action" value="Send to BGA Scrap Evaluation" class="btn btn-danger" />
+                                <input type="submit" name="Action" value="Send to DOA" class="btn btn-warning" />
+                            </span>
+
+                            <span class="pull-right">
+                                <input type="submit" name="Action" value="Send to Repair" class="btn btn-success" />
+                                <input type="submit" name="Action" value="Send to Cosmetic" class="btn btn-success" />
+                            </span>
+                        }
+                        <span class="clearfix"></span>
+                    </div>
+                    @Html.ActionLink("Go Back", "Index", new { }, new { @class = "btn btn-default" })
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        $(function () {
+            var WarrantyDesc = document.getElementById('WarrantyDescription');
+            $('input:radio[name="InWarranty"]').on('click', function (e) {
+                if ($("input[name=InWarranty]:checked").val() == 'True') {
+                    WarrantyDesc.readOnly = true;
+                    console.log("True");
+                } else {
+                    WarrantyDesc.readOnly = false;
+                    console.log("False");
+                }
+            });
+
+            $('input[type="datetime"]').datepicker(
+                { format: 'dd/mm/yyyy', }
+            );
+
+
+            $(".todo-list").sortable({
+                placeholder: "sort-highlight",
+                handle: ".handle",
+                forcePlaceholderSize: true,
+                zIndex: 999999
+            });
+
+        });
+    </script>
+}

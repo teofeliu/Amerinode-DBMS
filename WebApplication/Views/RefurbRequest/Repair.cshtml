@@ -1,0 +1,110 @@
+﻿@using WebApplication.Attributes
+
+@using WebApplication.Models.Application
+@model WebApplication.Models.Application.Repair
+@{
+    ViewBag.Title = "Repair";
+    ViewBag.SubTitle = "Request";
+    var RequestId = ViewContext.RouteData.Values["id"];
+}
+
+
+@section submenu {left-sidebar-menu-refurbs-new-request}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="box box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Repair for request #@ViewBag.Request.Id</h3>
+            </div>
+
+            @RenderPage("~/Views/RefurbRequest/_details.cshtml")
+
+            @if (@ViewBag.Message != null)
+            {
+                <div class="box-body">
+                    <div class="alert alert-danger alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+                        <p>
+                            @ViewBag.Message
+                        </p>
+
+                    </div>
+                </div>
+            }
+
+            @using (Html.BeginForm("Repair", "RefurbRequest", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="box-body">
+                    @Html.ValidationSummary(true)
+                    @Html.HiddenFor(model => model.RequestId)
+                    @Html.HiddenFor(model => model.UserId)
+                    @Html.HiddenFor(model => model.Date)
+
+                    <div class="form-group">
+                        <label for="TrialRepairTypes">Fail Checklist</label>
+                        @Html.DropDownList("TrialRepairTypes", 
+                            (IEnumerable<SelectListItem>)ViewBag.Components, 
+                            new { @class = "form-control" })
+                        @*<ul class="todo-list">
+                            <select>
+                                @foreach (var i in (IQueryable<RepairType>)ViewBag.Components)
+                                {
+                                    <li>
+                                    <option value="@i.Id" class="flat-red">@i.Name</option>
+                                    <span class="text">@i.Name</span>
+                                    </li>
+                                }
+                            </select>
+                        </ul>*@
+
+
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Description, new { @class = "" })
+                        @Html.EditorFor(x => x.Description, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Description)
+                    </div>
+
+                </div>
+
+                <div class="box-footer">
+                    <div class="box-btn-group">
+                        <span class="pull-left">
+                            @if (User.HasPermissions("RefurbRequest", "Write"))
+                            {
+                                <input type="submit" name="Action" value="Send to Scrap Evaluation" class="btn btn-danger" />
+                                <input type="submit" name="Action" value="Send to BGA Scrap Evaluation" class="btn btn-danger" />
+                            }
+                        </span>
+
+                        <span class="pull-right">
+                            @if (User.HasPermissions("RefurbRequest", "Write"))
+                            {
+                                <input type="submit" name="Action" value="Send to Cosmetic" class="btn btn-success" />
+                            }
+                        </span>
+                        <span class="clearfix"></span>
+                    </div>
+
+                    @Html.ActionLink("Go Back", "Index", new { }, new { @class = "btn btn-default" })
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('input[type="datetime"]').datepicker(
+                { format: 'dd/mm/yyyy', }
+            );
+        });
+    </script>
+}

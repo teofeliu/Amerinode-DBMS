@@ -1,0 +1,72 @@
+﻿@using WebApplication.Attributes
+
+@model IEnumerable<WebApplication.Models.Auth.PermissionRoleViewModel>
+
+@{
+    Layout = null;
+}
+
+<table class="table table-bordered table-striped" id="rulesDatatables" data-pageLength="50">
+    <thead>
+        <tr>
+            <th data-searcheable="true" data-orderable="true">Resource</th>
+            <th data-searcheable="true" data-orderable="true">Operations</th>
+            <th>Allow?</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var role in Model)
+        {
+            <tr>
+                <td>@role.Resource</td>
+                <td>@role.Operation</td>
+                <td>
+                    @Html.CheckBox("IsSelected", role.IsSelected, new {
+                       data_RoleName = role.RoleName,
+                       data_Resource = role.Resource,
+                       data_Operation = role.Operation
+                   })
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+@if (TempData.ContainsKey("Errors") && TempData["Errors"] is System.Array)
+{
+    <div class="box-body">
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+
+            @foreach (var error in (System.Collections.IEnumerable)TempData["Errors"])
+                {
+                <p>
+                    @error
+                </p>
+            }
+
+        </div>
+    </div>
+}
+
+
+<script type="text/javascript">
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        $(document)
+            .on('change', '#rulesDatatables :checkbox', function (e) {
+                e && e.preventDefault();
+                var $this = $(this);
+                var data = $this.data();
+                data.isSelected = $this.is(':checked');
+                $.post('@Url.Action("Create")', data);
+            });
+
+        var $rulesDatatables = $('#rulesDatatables').DataTable({});
+
+    });
+
+</script>

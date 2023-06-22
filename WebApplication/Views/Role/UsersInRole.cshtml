@@ -1,0 +1,53 @@
+﻿@using WebApplication.Attributes;
+
+@model IEnumerable<WebApplication.Models.ApplicationUser>
+
+@{
+    Layout = null;
+}
+
+
+<table class="table table-bordered table-striped" id="usersInRoleDatatable" data-pageLength="50">
+    <thead>
+        <tr>
+            <th>User name</th>
+            <th>E-mail</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+        <tr>
+            <td>@Html.ValueFor(m => user.NameIdentifier)</td>
+            <td>@Html.ValueFor(m => user.Email)</td>
+            <td>
+                @if(User.HasPermissions("Role", "Write"))
+                {
+                    <a href="javascript:;" class="btn btn-link" rel="remove" data-userID="@user.Id" data-roleId="@ViewData["RoleID"]">Remove from role</a>
+                }
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        $(document)
+            .on('click', '#usersInRoleDatatable a[rel=remove]', function (e) {
+                e && e.preventDefault();
+
+                var $this = $(this);
+                var data = $this.data();
+
+                $this.closest('tr').remove();
+                $.post('@Url.Action("RemoveUser")', data);
+
+            });
+
+    });
+
+</script>

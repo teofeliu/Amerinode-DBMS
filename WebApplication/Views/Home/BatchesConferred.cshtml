@@ -1,0 +1,16 @@
+﻿@using WebApplication.Models.Application
+@model IEnumerable<WebApplication.Models.Application.Batch>
+
+<div class="small-box StatusPrior-3">
+    <div class="inner">
+        <h3>@ViewBag.conferred</h3>
+        <p>Batches Waiting Test</p>
+    </div>
+    <div class="icon">
+        <i class="ion ion-eye"></i>
+    </div>
+    <a href="@Url.Action("ByStatus", "Batch", new { status = BatchStatus.Conferred })" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+</div>
+
+
+@RenderPage("~/Views/Home/_ListBatches.cshtml", new { actionName = "Create" })

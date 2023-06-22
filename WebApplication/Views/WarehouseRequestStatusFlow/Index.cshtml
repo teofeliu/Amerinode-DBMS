@@ -1,0 +1,59 @@
+﻿@using WebApplication.Extensions
+@model IEnumerable<WebApplication.Controllers.Application.RequestFlowStatusWarehouse>
+
+@{
+    ViewBag.Title = "Request Status";
+    ViewBag.SubTitle = "Warehouse";
+}
+
+@section submenu {left-sidebar-menu-cruds-warehouse-s}
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="box box-default">
+            <div class="box-header">
+                <h3 class="box-title with-border">Warehouse status flow configuration</h3>
+            </div>
+            <div class="box-body">
+                <table class="table table-bordered table-striped">
+                    @foreach (var item in Model)
+                    {
+                        <tr data-status="@item.Status">
+                            <td>@Utility.GetDescriptionFromEnumValue(item.Status)</td>
+                            <td>
+                                @Html.DropDownList("WarehouseId", item.Items, new { @class = "form-control" })
+                            </td>
+                        </tr>
+                    }
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            $(document)
+                .on("change.warehouse.select", "select", function (e) {
+                    e && e.preventDefault();
+                    var $t = $(this);
+                    var v = $t.find(':selected').val();
+                    var d = $t.closest('tr').data();
+                    $.post('@Url.Action("Save")',
+                        { status : d.status, warehouseId: v },
+                        function (data) {
+                        });
+                });
+
+        });
+
+    </script>
+
+}

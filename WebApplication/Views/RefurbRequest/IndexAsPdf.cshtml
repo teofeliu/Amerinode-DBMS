@@ -1,0 +1,35 @@
+﻿@model IEnumerable<WebApplication.Models.Application.RefurbRequest>
+@{
+    ViewBag.Title = "Refurb Requests Report";
+    Layout = "~/Views/Shared/_PdfLayout.cshtml";
+}
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Id)</th>
+            <th>@Html.DisplayNameFor(model => model.Model.PartNumber)</th>
+            <th>@Html.DisplayNameFor(model => model.SerialNumber)</th>
+            <th>@Html.DisplayNameFor(model => model.UserId)</th>
+            <th>@Html.DisplayNameFor(model => model.DateRequested)</th>
+            <th>@Html.DisplayNameFor(model => model.Status)</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                <td>@Html.DisplayFor(modelItem => item.Model.PartNumber)</td>
+                <td>@Html.DisplayFor(modelItem => item.SerialNumber)</td>
+                <td>@Html.DisplayFor(modelItem => item.UserId)</td>
+                <td>@Html.DisplayFor(modelItem => item.DateRequested)</td>
+                <td>@Html.DisplayFor(modelItem => item.Status)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+

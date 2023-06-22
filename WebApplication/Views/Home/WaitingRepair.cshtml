@@ -1,0 +1,16 @@
+﻿@using WebApplication.Models.Application
+@model IEnumerable<WebApplication.Models.Application.RefurbRequest>
+
+<div class="small-box StatusPrior-2">
+    <div class="inner">
+        <h3>@ViewBag.repair</h3>
+        <p>Waiting Repair</p>
+    </div>
+    <div class="icon">
+        <i class="ion ion-hammer"></i>
+    </div>
+    <a href="@Url.Action("ByStatus", "RefurbRequest", new { status = RequestFlowStatus.SentToRepair })" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+</div>
+
+
+@RenderPage("~/Views/Home/_ListRequests.cshtml", new { actionName = "Repair" })

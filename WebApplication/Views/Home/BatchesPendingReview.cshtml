@@ -1,0 +1,16 @@
+﻿@using WebApplication.Models.Application
+@model IEnumerable<WebApplication.Models.Application.Batch>
+
+<div class="small-box StatusPrior-1">
+    <div class="inner">
+        <h3>@ViewBag.pendingReview</h3>
+        <p>Batches Pending Review</p>
+    </div>
+    <div class="icon">
+        <i class="ion ion-pause"></i>
+    </div>
+    <a href="@Url.Action("ByStatus", "Batch", new { status = BatchStatus.PendingReview })" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+</div>
+
+
+@RenderPage("~/Views/Home/_ListBatches.cshtml", new { actionName = "Create" })

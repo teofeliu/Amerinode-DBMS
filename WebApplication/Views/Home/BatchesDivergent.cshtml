@@ -1,0 +1,14 @@
+﻿@model IEnumerable<WebApplication.Models.Application.Batch>
+
+<div class="small-box StatusPrior-2">
+    <div class="inner">
+        <h3>@ViewBag.divergences</h3>
+        <p>Diverging Batches</p>
+    </div>
+    <div class="icon">
+        <i class="ion ion-android-warning"></i>
+    </div>
+    <a href="@Url.Action("Divergents", "Batch")" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+</div>
+
+@RenderPage("~/Views/Home/_ListBatches.cshtml", new { actionName = "Create" })

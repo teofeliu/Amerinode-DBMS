@@ -1,0 +1,15 @@
+﻿@model IEnumerable<WebApplication.Models.Application.RefurbRequest>
+
+<div class="small-box StatusPrior-1">
+    <div class="inner">
+        <h3>@ViewBag.trial</h3>
+        <p>Waiting Trial</p>
+    </div>
+    <div class="icon">
+        <i class="ion ion-ios-alarm"></i>
+    </div>
+    <a href="@Url.Action("ByStatus", "RefurbRequest")" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+</div>
+
+
+@RenderPage("~/Views/Home/_ListRequests.cshtml", new { actionName = "Trial" })

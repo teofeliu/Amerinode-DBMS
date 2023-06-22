@@ -1,0 +1,97 @@
+﻿@using WebApplication.Attributes;
+@using WebApplication.Extensions;
+
+@model IEnumerable<WebApplication.Models.Application.Warehouse>
+
+@{
+    ViewBag.Title = "Listing";
+    ViewBag.SubTitle = "Warehouse";
+}
+
+@section submenu {left-sidebar-menu-cruds-warehouse}
+
+
+
+<div class="row">
+    <div class="col-xs-12">
+
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Find @ViewBag.SubTitle</h3>
+            </div>
+            <div class="box-body">
+                <form class="form-inline" action="" method="get">
+                    <div class="form-group">
+                        <input name="q" type="text" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-default">Search</button>
+                    <button onclick="location.href='@Url.Action("Index", "Warehouse")'" type="button" class="btn btn-default">Show All</button>
+                </form>
+            </div>
+        </div><!--/search box-->
+
+        <div class="box box-default">
+            <div class="box-header">
+                <h3 class="box-title">@ViewBag.Title</h3>
+            </div>
+            <div class="box-body">
+                <table id="warehousesDatatable" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(m => m.Id)</th>
+                            <th>@Html.DisplayNameFor(m => m.Name)</th>
+                            <th>@Html.DisplayNameFor(m => m.WarehouseType)</th>
+                            <th data-orderable="false">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(m => item.Id)</td>
+                                <td>@Html.DisplayFor(m => item.Name)</td>
+                                <td>@Utility.GetDescriptionFromEnumValue(item.WarehouseType)</td>
+                                <td>
+                                    @if (User.HasPermissions("Warehouse", "Read"))
+                                    {
+                                        @Html.ActionLink("Edit", "Create", new { id = item.Id })
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="box-footer">
+                @if (User.HasPermissions("Warehouse", "Write"))
+                {
+                    <a href="@Url.Action("Create")" class="btn btn-primary">New</a>
+                }
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            var $searchInput = $('#q');
+            var $warehousesDatatable = $('#warehousesDatatable').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "pageLength": 50
+            });
+
+            $searchInput.focus();
+        });
+
+    </script>
+}

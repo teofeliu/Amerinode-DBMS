@@ -1,0 +1,344 @@
+﻿@using WebApplication.Extensions
+
+@{
+    ViewBag.Title = "Refurb Requests";
+    ViewBag.SubTitle = "All Requests";
+}
+
+@section submenu {left-sidebar-menu-refurbs-requests}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Find Requests</h3>
+            </div>
+            <div class="box-body">
+                <div class="form">
+
+                    <div class="row">
+                        <div class="col-xs-12 col-md-4">
+                            <div class="form-group">
+                                <label>Creation date</label>
+                                <input type="text" value="" id="DateRequested" class="form-control" />
+                                @Html.Hidden("DateRequestedStart", "")
+                                @Html.Hidden("DateRequestedEnd", "")
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-4">
+                            <div class="form-group">
+                                <label>Delivery date</label>
+                                <input type="text" value="" id="DateDelivery" class="form-control" />
+                                @Html.Hidden("DateDeliveryStart", "")
+                                @Html.Hidden("DateDeliveryEnd", "")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-xs-12 col-md-4">
+                            <div class="form-group">
+                                <label>Origin</label>
+                                <select id="OriginId" class="form-control" multiple="multiple">
+                                    <option value="" checked>All origin warehouses</option>
+                                    @foreach (var origin in ViewBag.OriginWarehouseList)
+                                    {
+                                        <option value="@origin.Id">@origin.Id - @origin.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-4">
+                            <div class="form-group">
+                                <label>Destination</label>
+                                <select id="DestinationId" class="form-control" multiple="multiple">
+                                    <option value="" checked>All destination warehouses</option>
+                                    @foreach (var destination in ViewBag.DestinationWarehouseList)
+                                    {
+                                        <option value="@destination.Id">@destination.Id - @destination.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+
+                        <div class="col-xs-12 col-md-8">
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select id="Status" multiple="multiple" class="form-control" multiple="multiple">
+                                    @foreach (var status in ViewBag.StatusList)
+                                    {
+                                        <option value="@status">@Utility.GetDescriptionFromEnumValue(status)</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="col-xs-12 col-md-8">
+                            <div class="separator">
+                                <span>OR</span>
+                                <hr />
+                            </div>
+                            <div class="form-group">
+                                <label for="q">Term <small><em>(do not used in export all data as CSV)</em></small></label>
+                                <input id="q" name="q" type="text" class="form-control" placeholder="serial number">
+                            </div>
+                            <button id="search" type="button" class="btn btn-default">Search</button>
+                            @*<button id="showAll" type="button" class="btn btn-default">Show All</button>*@
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        @RenderPage("~/Views/RefurbRequest/_List.cshtml")
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @Scripts.Render("~/AdminLTE/plugins/jsrender/js")
+    @Scripts.Render("~/AdminLTE/plugins/lodash/js")
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+
+            // search form settings
+            var defaultRangePickerOpts = {
+                locale: {
+                    format: 'YYYY/MM/DD',
+                    cancelLabel: 'Clear'
+                },
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(7, 'days'), moment()],
+                    'Last 15 Days': [moment().subtract(15, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(30, 'days'), moment()],
+                    'This Month (Default)': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                    'All': [moment('@ViewBag.MinDate', 'YYYYMMDD'), moment()]
+                },
+                startDate: moment().startOf('month'),
+                endDate: moment(),
+                minDate: moment('@ViewBag.MinDate', 'YYYYMMDD'),
+                maxDate: moment()
+            };
+
+            var deliveryRangePickerOpts = {
+                autoUpdateInput: false,
+                locale: {
+                    format: 'YYYY/MM/DD',
+                    cancelLabel: 'Clear'
+                },
+                ranges: {
+                    'None': [null, null],
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(7, 'days'), moment()],
+                    'Last 15 Days': [moment().subtract(15, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(30, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                    'All': [moment('@ViewBag.MinDate', 'YYYYMMDD'), moment()]
+                },
+                //startDate: moment('@ViewBag.MinDate', 'YYYYMMDD'),
+                //endDate: moment(),
+                minDate: moment('@ViewBag.MinDate', 'YYYYMMDD'),
+                maxDate: moment()
+            };
+
+            var drHandler = function (start, end, label) {
+                $('#DateRequestedStart').val(start.format('YYYYMMDD'));
+                $('#DateRequestedEnd').val(end.format('YYYYMMDD'));
+            };
+
+            var ddHandler = function (start, end, label) {
+                $('#DateDeliveryStart').val(start.format('YYYYMMDD'));
+                $('#DateDeliveryEnd').val(end.format('YYYYMMDD'));
+            }
+
+            var $dateRequested = $('#DateRequested').daterangepicker(defaultRangePickerOpts, drHandler);
+            // initial values to query
+            $('#DateRequestedStart').val(moment().startOf('month').format('YYYYMMDD'));
+            $('#DateRequestedEnd').val(moment().format('YYYYMMDD'));
+
+            var $dateDelivered = $('#DateDelivery').daterangepicker(deliveryRangePickerOpts, ddHandler);
+            $('#DateDelivery')
+                .on('apply.daterangepicker', function (ev, picker) {
+                    $(this).val(picker.startDate.format('YYYY/MM/DD') + ' - ' + picker.endDate.format('YYYY/MM/DD'));
+                })
+                .on('cancel.daterangepicker', function (ev, picker) {
+                    $(this).val('');
+                });
+
+            var $status = $('#Status').select2({});
+            var $origin = $('#OriginId').select2({});
+            var $destination = $('#DestinationId').select2({});
+
+
+
+            var $refurbDataTables = $('#refurbDataTables').DataTable({
+                serverSide: true,
+                pageLength: 25,
+                searching: false,
+                ajax: {
+                    url: '@Url.Action("PageData")',
+                    type: 'POST',
+                    data: function (data) {
+                        data.search.value = $('#q').val();
+
+                        if (!data.search.value) {
+                            var extra = {};
+                            // getting the date request range
+                            extra.dateRequestedStart = $('#DateRequestedStart').val();
+                            extra.dateRequestedEnd = $('#DateRequestedEnd').val();
+
+                            // send the delivery dates if setted
+                            var $ddStart = $("#DateDeliveryStart");
+                            if ($ddStart.val()) {
+                                extra.dateDeliveryStart = $ddStart.val();
+                                extra.dateDeliveryEnd = $("#DateDeliveryEnd").val();
+                            }
+
+                            // check if has at least one status selected
+                            var statusData = $('#Status').select2('val');
+                            if (statusData) {
+                                extra.status = statusData;
+                            }
+
+                            var originData = $('#OriginId').select2('val');
+                            if (originData) {
+                                extra.origin = originData;
+                            }
+
+                            var destinationData = $('#DestinationId').select2('val');
+                            if (destinationData) {
+                                extra.destination = destinationData;
+                            }
+
+                            data.filters = extra;
+                        }
+                    }
+                },
+                columns: [
+                    {
+                        name: 'id',
+                        data: 'id',
+                        title: 'Id',
+                        sortable: true,
+                        searchable: false,
+                        render: function (data) {
+                            return $('#idColumn').render({ id: data });
+                        }
+                    },
+                    {
+                        name: 'partNumber',
+                        data: 'partNumber',
+                        title: 'Part Number',
+                        sortable: false,
+                        searchable: false
+                    },
+                    {
+                        name: 'serialNumber',
+                        data: 'serialNumber',
+                        title: 'Serial Number',
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        name: 'userId',
+                        data: 'userId',
+                        title: 'User',
+                        sortable: false,
+                        searchable: true
+                    },
+                    {
+                        name: 'dateRequested',
+                        data: 'dateRequested',
+                        title: 'Date Requested',
+                        sortable: true,
+                        searchable: false,
+                        render: formatDateString
+                    },
+                    {
+                        name: 'lastUpdated',
+                        data: 'lastUpdated',
+                        title: 'Last Updated',
+                        sortable: true,
+                        searchable: false,
+                        render: formatDateString
+                    },
+                    {
+                        name: 'statusDescription',
+                        data: 'statusDescription',
+                        title: 'Status',
+                        sortable: false,
+                        searchable: false
+                    },
+                    {
+                        name: 'supply',
+                        data: 'supply',
+                        title: 'Supply',
+                        sortable: false,
+                        searchable: false
+                    },
+                    {
+                        name: 'inWarranty',
+                        data: 'inWarranty',
+                        title: 'In Warranty',
+                        sortable: false,
+                        searchable: false
+                    },
+                    {
+                        name: 'status',
+                        data: 'status',
+                        title: 'Actions',
+                        sortable: false,
+                        searchable: false,
+                        render: function (data, type, row) {
+                            var $tmpl = $('#action-' + data);
+                            if (!$tmpl.length) {
+                                $tmpl = $('#action');
+                            }
+                            return $tmpl.render(row);
+                        }
+                    }
+                ]
+            });
+
+
+            var $elSearchResultAsPdf = $('#searchAsPdf');
+            var query = window.location.search || '';
+            $elSearchResultAsPdf.attr('href', '@Url.Action("IndexAsPdf")' + query);
+
+            $(document)
+                .on('click.search.datatables', '#search', function (e) {
+                    e && e.preventDefault();
+                    $refurbDataTables.ajax.reload(null, true);
+                })
+                .on('click.search.datatables', '#showAll', function (e) {
+                    e && e.preventDefault();
+                    $('#q').val('');
+                    $refurbDataTables.ajax.reload(null, true);
+                });
+
+
+
+
+        });
+
+    </script>
+}

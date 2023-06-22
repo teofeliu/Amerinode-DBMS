@@ -1,0 +1,247 @@
+﻿@using WebApplication.Extensions
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Amerinode - Refurb</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    @Styles.Render("~/AdminLTE/plugins/font-awesome/css/font-awesome.min.css")
+    @Styles.Render("~/AdminLTE/plugins/ionicons/css/ionicons.min.css")
+    @Styles.Render("~/AdminLTE/bootstrap/css/bootstrap.min.css")
+    @Styles.Render("~/AdminLTE/plugins/datatables/css/dataTables.bootstrap.css")
+    @Styles.Render("~/AdminLTE/plugins/datatables/css/jquery.dataTables.min.css")
+    @Styles.Render("~/AdminLTE/plugins/datatables/css/jquery.dataTables_themeroller.css")
+    @Styles.Render("~/AdminLTE/plugins/daterangepicker/css/daterangepicker.css")
+    @Styles.Render("~/AdminLTE/plugins/icheck/css/all.css")
+    @Styles.Render("~/AdminLTE/plugins/colorpicker/css/bootstrap-colorpicker.min.css")
+    @Styles.Render("~/AdminLTE/plugins/timepicker/css/bootstrap-timepicker.min.css")
+    @Styles.Render("~/AdminLTE/plugins/datepicker/css/datepicker3.css")
+    @Styles.Render("~/AdminLTE/plugins/select2/css/select2.min.css")
+    @Styles.Render("~/AdminLTE/dist/css/admin-lte.min.css")
+    @Styles.Render("~/AdminLTE/dist/css/skins/_all-skins.min.css")
+    @Styles.Render("~/Styles/Elements/General.css")
+
+</head>
+<body class="hold-transition skin-blue skin-blue-light sidebar-mini">
+    <div class="wrapper">
+        <header class="main-header">
+            <a href="@Url.Action("DashboardV1", "Home")" class="logo" style="background-color: #ffffff;">
+                <span class="logo-mini">
+                    <img src="~/Styles/Images/logo-1.png" style="width:45px" alt="Logo" />
+                </span>
+                <span class="logo-lg">
+                    <img src="~/Styles/Images/refurn-alpha.png" style="width: 210px;" alt="Logo" />
+                </span>
+            </a>            
+            @RenderPage("~/Views/Shared/_TopMenu.cshtml")
+            
+        </header>
+
+        @RenderPage("~/Views/Shared/_SideMenu.cshtml")
+        
+        <div class="content-wrapper">
+            <section class="content-header">
+                <h1>
+                    @ViewBag.Title
+                    <small>@ViewBag.SubTitle</small>
+                </h1>
+                <ol class="breadcrumb">
+                    <li><a href="#"><i class="fa fa-hand-o-right"></i>@ViewBag.SubTitle</a></li>
+                    <li class="active">@ViewBag.Title</li>
+                </ol>
+            </section>
+            <section class="content">
+                @RenderBody()
+            </section>
+        </div>
+
+        <footer class="main-footer">
+            <div class="pull-right hidden-xs">
+                <b>Version</b> 1 Alpha
+            </div>
+            <strong>
+                Amerinode Refurb Application (ARA). All rights reserved to Amerinode Inc. <br/> Created by the most awesome IT Company <a href="http://os3ti.com" target="_blank">OS3 IT Solutions</a>.</strong>
+        </footer>
+        <aside class="control-sidebar control-sidebar-dark">
+            <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+                <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+                <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane" id="control-sidebar-home-tab">
+                    <h3 class="control-sidebar-heading">Recent Activity</h3>
+                    <ul class="control-sidebar-menu">
+                        <li>
+                            <a href="javascript::;">
+                                <i class="menu-icon fa fa-birthday-cake bg-red"></i>
+                                <div class="menu-info">
+                                    <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
+                                    <p>Will be 23 on April 24th</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript::;">
+                                <i class="menu-icon fa fa-user bg-yellow"></i>
+                                <div class="menu-info">
+                                    <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
+                                    <p>New phone +1(800)555-1234</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript::;">
+                                <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
+                                <div class="menu-info">
+                                    <h4 class="control-sidebar-subheading">Nora Joined Mailing List</h4>
+                                    <p>nora@example.com</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript::;">
+                                <i class="menu-icon fa fa-file-code-o bg-green"></i>
+                                <div class="menu-info">
+                                    <h4 class="control-sidebar-subheading">Cron Job 254 Executed</h4>
+                                    <p>Execution time 5 seconds</p>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                    <h3 class="control-sidebar-heading">Tasks Progress</h3>
+                    <ul class="control-sidebar-menu">
+                        <li>
+                            <a href="javascript::;">
+                                <h4 class="control-sidebar-subheading">
+                                    Custom Template Design
+                                    <span class="label label-danger pull-right">70%</span>
+                                </h4>
+                                <div class="progress progress-xxs">
+                                    <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript::;">
+                                <h4 class="control-sidebar-subheading">
+                                    Update Resume
+                                    <span class="label label-success pull-right">95%</span>
+                                </h4>
+                                <div class="progress progress-xxs">
+                                    <div class="progress-bar progress-bar-success" style="width: 95%"></div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript::;">
+                                <h4 class="control-sidebar-subheading">
+                                    Laravel Integration
+                                    <span class="label label-warning pull-right">50%</span>
+                                </h4>
+                                <div class="progress progress-xxs">
+                                    <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript::;">
+                                <h4 class="control-sidebar-subheading">
+                                    Back End Framework
+                                    <span class="label label-primary pull-right">68%</span>
+                                </h4>
+                                <div class="progress progress-xxs">
+                                    <div class="progress-bar progress-bar-primary" style="width: 68%"></div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div>
+                <div class="tab-pane" id="control-sidebar-settings-tab">
+                    <form method="post">
+                        <h3 class="control-sidebar-heading">General Settings</h3>
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Report panel usage
+                                <input type="checkbox" class="pull-right" checked>
+                            </label>
+                            <p>
+                                Some information about this general settings option
+                            </p>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Allow mail redirect
+                                <input type="checkbox" class="pull-right" checked>
+                            </label>
+                            <p>
+                                Other sets of options are available
+                            </p>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Expose author name in posts
+                                <input type="checkbox" class="pull-right" checked>
+                            </label>
+                            <p>
+                                Allow the user to show his name in blog posts
+                            </p>
+                        </div>
+                        <h3 class="control-sidebar-heading">Chat Settings</h3>
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Show me as online
+                                <input type="checkbox" class="pull-right" checked>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Turn off notifications
+                                <input type="checkbox" class="pull-right">
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Delete chat history
+                                <a href="javascript::;" class="text-red pull-right"><i class="fa fa-trash-o"></i></a>
+                            </label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </aside>
+        <div class="control-sidebar-bg"></div>
+    </div>
+
+    @Scripts.Render("~/AdminLTE/plugins/jquery/js/jQuery-2.1.4.min.js")
+    @RenderSection("menu", required: false)
+
+    <script>
+        var i = $('#@RenderSection("submenu", required: false)');
+        i.addClass('active');
+        i.closest('.treeview').addClass('active');
+    </script>
+
+    @Scripts.Render("~/AdminLTE/bootstrap/js/bootstrap.min.js")
+    @Scripts.Render("~/AdminLTE/plugins/slimscroll/js/jquery.slimscroll.min.js")
+    @Scripts.Render("~/AdminLTE/plugins/fastclick/js/fastclick.min.js")
+    @Scripts.Render("~/Scripts/Shared/_Layout.js")
+    @Scripts.Render("~/AdminLTE/dist/js/app.min.js")
+    @Scripts.Render("~/AdminLTE/plugins/select2/js/select2.full.min.js")
+    @Scripts.Render("~/AdminLTE/plugins/input-mask/js/jquery.inputmask.js")
+    @Scripts.Render("~/AdminLTE/plugins/momentjs/js/moment.min.js")
+    @Scripts.Render("~/AdminLTE/plugins/daterangepicker/js/daterangepicker.js")
+    @Scripts.Render("~/AdminLTE/plugins/colorpicker/js/bootstrap-colorpicker.min.js")
+    @Scripts.Render("~/AdminLTE/plugins/timepicker/js/bootstrap-timepicker.min.js")
+    @Scripts.Render("~/AdminLTE/plugins/datepicker/js/bootstrap-datepicker.js")
+    @Scripts.Render("~/AdminLTE/plugins/icheck/js/icheck.min.js")
+    
+    @Scripts.Render("~/AdminLTE/plugins/datatables/js/jquery.dataTables.js")
+    @Scripts.Render("~/AdminLTE/plugins/datatables/js/dataTables.bootstrap.min.js")
+
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>
