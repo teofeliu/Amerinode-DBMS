@@ -1,0 +1,36 @@
+﻿@using WebApplication.Models.Application
+@{
+    ViewBag.Title = "Requests";
+    ViewBag.SubTitle = "Charts";
+}
+
+@section Scripts {
+    @Scripts.Render("~/AdminLTE/plugins/lodash/js")
+    @Scripts.Render("~/AdminLTE/plugins/chartjs2/js")
+    @Scripts.Render("~/Scripts/Charts/Refurb")
+
+}
+
+@section submenu {left-sidebar-menu-dashboard-charts}
+
+<div class="row">
+    <div class="col-xs-12 col-md-6">
+        @{ Html.RenderPartial("_StatusReport"); }
+    </div>
+    <div class="col-xs-12 col-md-6">
+        @{ Html.RenderPartial("_GroupedAging"); }
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-md-12">
+        @{ Html.RenderPartial("_ProdutivityReport"); }
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-md-7">
+        @{ Html.RenderPartial("_StatusReportByDay"); }
+    </div>
+    <div class="col-xs-12 col-md-5">
+        @{ Html.RenderPartial("_AgingByStatus"); }
+    </div>
+</div>

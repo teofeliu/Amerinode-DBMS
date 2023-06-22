@@ -1,0 +1,87 @@
+﻿@using WebApplication.Attributes
+
+@model WebApplication.Models.Application.BatchItem
+
+@{
+    ViewBag.Title = "Review";
+    ViewBag.SubTitle = "Batch Item";
+}
+
+@section submenu {left-sidebar-menu-batch-create}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">
+                    <span>Review</span> Conference Batch Item
+                </h3>
+            </div>
+
+            @if (!string.IsNullOrEmpty(@ViewBag.Message))
+            {
+                <div class="box-body">
+                    <div class="alert alert-danger alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+
+                        <p>
+                            @ViewBag.Message
+                        </p>
+
+                    </div>
+                </div>
+            }
+
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="box-body">
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.Id)
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ModelId, new { @class = "" })
+                        @Html.DropDownListFor(x => x.ModelId, (SelectList)ViewBag.Models, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.ModelId)
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SerialNumber, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.SerialNumber, new { htmlAttributes = new { @class = "form-control", disabled = "" } })
+                        @Html.ValidationMessageFor(model => model.SerialNumber, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control", disabled = "" } })
+                        @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+                    </div>
+
+                </div>
+
+
+                <div class="box-footer">
+                    <div class="box-btn-group">
+                        <div class="pull-left">
+                            @Html.ActionLink("Cancel", "BatchConference", new { id = Model.BatchId }, new { @class = "btn btn-default" })
+                        </div>
+
+                        <div class="pull-right">
+                            @if (User.HasPermissions("BatchConference", "Write"))
+                            {
+                                <input type="submit" value="Make item available to conference" class="btn btn-primary" />
+                            }
+                        </div>
+                        <span class="clearfix"></span>
+                    </div>
+                </div>
+
+            }
+
+        </div>
+    </div>
+</div>

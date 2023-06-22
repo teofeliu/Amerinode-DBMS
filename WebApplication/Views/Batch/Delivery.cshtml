@@ -1,0 +1,154 @@
+﻿@using WebApplication.Attributes
+
+@model IEnumerable<WebApplication.Models.Application.DeliveryBatch>
+
+@{
+    ViewBag.Title = "Delivery";
+    ViewBag.SubTitle = "Batches";
+}
+
+@section submenu {left-sidebar-menu-batch-delivery}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Delivery Batches</h3>
+            </div>
+            <div class="box-body table-responsive">
+                <table id="deliveryDataTables" class="table table-bordered table-striped"></table>
+            </div>
+            @if (User.HasPermissions("BatchDelivery", "Write"))
+            {
+                <div class="box-footer">
+                    @Html.ActionLink("New Delivery", "CreateDeliveryBatch", new { }, new { @class = "btn btn-primary" })
+                </div>
+            }
+        </div><!--/.box-->
+    </div>
+</div>
+<script type="text/javascript">
+    function formatDateString(data) {
+        var d = moment(data);
+        if (!d.isValid()) {
+            return 'N/A';
+        }
+        return moment(data).format('DD/MM/YYYY HH:mm');
+    }
+</script>
+
+<script type="text/x-jsrender" id="idColumn">
+    <a href="@Url.Action("CreateDeliveryBatch")/{{:id}}" class="btn btn-link">
+        <i class="fa fa-search"></i>
+        {{:code}}
+    </a>
+</script>
+<script type="text/x-jsrender" id="statusColumn">
+    {{if status === 'Delivered'}}
+    <span class="label label-success">{{:statusDescription}}</span>
+    {{else status === 'Open'}}
+    <span class="label label-warning">{{:statusDescription}}</span>
+    {{else status === 'Cancelled'}}
+    <span class="label label-danger">{{:statusDescription}}</span>
+    {{else}}
+    <span class="label label-default">{{:statusDescription}}</span>
+    {{/if}}
+</script>
+<script type="text/x-jsrender" id="actionColumn">
+    @if (User.HasPermissions("BatchDelivery", "Write"))
+    {
+        <text>
+            {{if status === 'Open'}}
+            <a href="@Url.Action("CreateDeliveryBatch")/{{:id}}" class="btn btn-success">
+                Edit Batch
+            </a>
+            {{else}}
+            <a href="@Url.Action("CreateDeliveryBatch")/{{:id}}" class="btn btn-info">
+                View Batch
+            </a>
+            {{/if}}
+        </text>
+    }
+    else
+    {
+        <text>Permission needed to execute actions</text>
+    }
+</script>
+
+@section Scripts {
+    @Scripts.Render("~/AdminLTE/plugins/jsrender/js")
+
+    <script type="text/javascript">
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            var $batchDataTables = $('#deliveryDataTables').DataTable({
+                serverSide: true,
+                pageLength: 25,
+                searching: false,
+                ajax: {
+                    url: '@Html.Raw(Url.Action("PagedDelivery"))',
+                    type: 'POST'
+                },
+                columns: [
+                    {
+                        name: 'id',
+                        data: 'id',
+                        title: 'ID',
+                        sortable: true,
+                        render: function (value, type, row) {
+                            return $('#idColumn').render(row);
+                        }
+                    },
+                    {
+                        name: 'userId',
+                        data: 'userId',
+                        title: 'Created By',
+                        sortable: false
+                    },
+                    {
+                        name: 'created',
+                        data: 'created',
+                        title: 'Created At',
+                        sortable: true,
+                        render: formatDateString
+                    },
+                    {
+                        name: 'delivered',
+                        data: 'delivered',
+                        title: 'Delivered At',
+                        sortable: true,
+                        render: formatDateString
+                    },
+                    {
+                        name: 'cancelled',
+                        data: 'cancelled',
+                        title: 'Canceled At',
+                        sortable: true,
+                        render: formatDateString
+                    },
+                    {
+                        name: 'statusDescription',
+                        data: 'statusDescription',
+                        title: 'Status',
+                        sortable: false,
+                        render: function (value, type, row) {
+                            return $('#statusColumn').render(row);
+                        }
+                    },
+                    {
+                        name: 'status',
+                        data: 'status',
+                        title: 'Actions',
+                        sortable: false,
+                        render: function (value, type, row) {
+                            return $('#actionColumn').render(row);
+                        }
+                    }
+                ]
+            });
+
+        });
+
+    </script>
+}

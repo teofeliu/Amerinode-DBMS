@@ -1,0 +1,58 @@
+﻿@using WebApplication.Attributes
+@{
+    ViewBag.Title = "Import Batches";
+    ViewBag.SubTitle = "From Excel";
+}
+
+@section submenu {left-sidebar-menu-batch-import}
+
+<div class="row">
+
+    <div class="col-md-6">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Batches</h3>
+            </div>
+            <div class="box-body">
+                <div class="alert alert-warning">
+                    <h4 class="alert-heading">Hey!</h4>
+                    <p>
+                        You must upload a document exactly like this template that is <a href="~/Uploads/import-batch-model.xlsx" class="">here</a>.
+                    </p>
+                    @*<p class="mb-0">Whenever you need to, be sure to use margin utilities to keep things nice and tidy.</p>*@
+                </div>
+
+                @if (@ViewBag.Message != null)
+                {
+                    <div class="alert alert-danger alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+                        <p>
+                            @ViewBag.Message
+                        </p>
+                    </div>
+                }
+
+                @using (Html.BeginForm("ImportFromExcel", "Batch", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <div class="form-group">
+                        <label>Select File</label>
+                        <input type="file" name="file" class="form-control" />
+                    </div>
+                    <div class="box-footer">
+                        <div class="box-btn-group">
+                            <span class="pull-left"></span>
+                            @if (User.HasPermissions("Batch", "Write"))
+                            {
+                                <span class="pull-right">
+                                    <input type="submit" class="btn btn-success" value="Import" />
+                                </span>
+                            }
+                            @Html.ActionLink("Go Back", "Index", new { }, new { @class = "btn btn-default" })
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

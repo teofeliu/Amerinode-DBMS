@@ -1,0 +1,45 @@
+﻿@using WebApplication.Attributes
+
+@model WebApplication.Models.Application.DeliveryBatch
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Model</th>
+            <th>Serial Number</th>
+            <th>Date</th>
+            <th>User</th>
+            <th>Origin</th>
+            <th>Destination</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="deliveryBatchItems">
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@Html.DisplayFor(m => item.Id)</td>
+                <td>@Html.DisplayFor(m => item.RefurbRequest.Model.Name)</td>
+                <td>@Html.DisplayFor(m => item.RefurbRequest.SerialNumber)</td>
+                <td>@Html.DisplayFor(m => item.Date)</td>
+                <td>@Html.DisplayFor(m => item.UserId)</td>
+            	<td>@String.Format("{0} - {1}", item.Origin.Id, item.Origin.Name)</td>
+            	<td>@String.Format("{0} - {1}", item.Destination.Id, item.Destination.Name)</td>
+                <td>
+                    @if (Model.Status == WebApplication.Models.Application.DeliveryBatchStatus.Open)
+                    {
+                        if (User.HasPermissions("BatchDelivery", "Write"))
+                        {
+                            <a href="javascript:;" data-id="@item.Id" class="btn btn-link action">Delete</a>
+                        }
+                    }
+                    else
+                    {
+                        <text>No more actions is allowed</text>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

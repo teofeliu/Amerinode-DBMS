@@ -1,0 +1,103 @@
+﻿@model IEnumerable<WebApplication.Models.Application.BatchOrder>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@section submenu {left-sidebar-menu-cruds-batchesStock}
+<div class="row">
+    <div class="col-xs-12">
+        @*<div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Find Order</h3>
+                </div>
+                <div class="box-body">
+                    <form class="form-inline" action="" method="get">
+                        <div class="form-group">
+                            <input name="q" type="text" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-default">Search</button>
+                    </form>
+                </div>
+        </div>*@
+
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Orders</h3>
+            </div>
+            <div class="box-body">
+                <table id="datatable" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Id)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Model.Name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Quantity)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.DateCreate)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.UserId)
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Id)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Model.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Quantity)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.DateCreate)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.UserId)
+                                </td>
+
+                            </tr>
+                        }
+
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="box-footer">
+                <input type="button" class="btn btn-primary" value="New" onclick="location.href='@Url.Action("Create", "BatchOrders")'" />
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('#datatable').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": true,                
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "pageLength": 50
+            });
+            //var txt = document.getElementsByModelName('q')[0];
+            //txt.focus();
+        });
+    </script>
+}

@@ -1,0 +1,37 @@
+﻿
+@{
+    ViewBag.Title = "Test";
+}
+
+<h2>Test</h2>
+
+@{ Html.RenderPartial("_StatusReportByDay"); }
+@{ Html.RenderPartial("_ProdutivityReport"); }
+@{ Html.RenderPartial("_StatusReport"); }
+@{ Html.RenderPartial("_AgingByStatus"); }
+
+<div>
+    <h3>Color palette to test</h3>
+    <div id="blocks"></div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/AdminLTE/plugins/lodash/js")
+    @Scripts.Render("~/AdminLTE/plugins/chartjs2/js")
+    @Scripts.Render("~/Scripts/Charts/Refurb")
+
+    <script type="text/javascript">
+        var $container = $('#blocks');
+        $.each(getBaseColors(), function (i, v) {
+            var $el = $('<div></div>')
+                .css({
+                    'width': 64,
+                    'height': 64,
+                    'display': 'inline-block',
+                    'background-color': 'rgb(' + v.join(',') + ')'
+                })
+                .text(i);
+            $container.append($el);
+        });
+    </script>
+}

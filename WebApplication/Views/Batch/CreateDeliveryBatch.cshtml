@@ -1,0 +1,187 @@
+﻿@using WebApplication.Attributes
+
+@model WebApplication.Models.Application.DeliveryBatch
+
+@section submenu {left-sidebar-menu-batch-delivery}
+
+@{
+    ViewBag.Title = "Create Delivery";
+    ViewBag.SubTitle = "Batch";
+}
+
+<div class="row">
+    <div class="col-xs-12">
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h2>Delivery batch</h2>
+                <p>Batch ID: <strong>@Model.GetCode</strong></p>
+            </div>
+
+            <div class="panel-body">
+                <div class="form-horizontal">
+
+                    @if (User.HasPermissions("BatchDelivery", "Write"))
+                    {
+
+                        if (Model.Status == WebApplication.Models.Application.DeliveryBatchStatus.Open)
+                        {
+
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <label for="serialNumber">Serial Number</label>
+                                    <input type="text" name="SerialNumber" id="SerialNumber" value="" class="form-control input-lg" />
+                                </div>
+                            </div>
+                        }
+
+                    }
+
+                    <div class="form-group">
+                        <div class="col-xs-12 col-md-3">
+                            <label>Count:</label>
+                            <span id="Count">@Model.Items.Count</span>
+                        </div>
+
+                        <div class="col-xs-12 col-md-9">
+                            <label>Callback Messages:</label>
+                            <span class="alert conference-alert" id="Message"></span>
+                        </div>
+                    </div>
+
+                </div><!--/.form-horizontal-->
+            </div><!--/.panel-body-->
+            <div class="panel-footer">
+                <div class="pull-left">
+                    @Html.ActionLink("Go Back", "Delivery", new { }, new { @class = "btn btn-default" })
+                    @if (Model.Status == WebApplication.Models.Application.DeliveryBatchStatus.Open)
+                    {
+                        if (User.HasPermissions("BatchDelivery", "Delete"))
+                        {
+                            @Html.ActionLink("Cancel This Batch", "CancelDeliveryBatch", new { id = Model.Id }, new { @class = "btn btn-danger" })
+                        }
+                    }
+                </div>
+                <div class="pull-right">
+                    @if (Model.Status == WebApplication.Models.Application.DeliveryBatchStatus.Open)
+                    {
+                        if (User.HasPermissions("BatchDelivery", "Write"))
+                        {
+                            @Html.ActionLink("Process batch", "ProcessDeliveryBatch", new { id = Model.Id }, new { @class = "btn btn-primary" })
+                        }
+                    }
+                    else
+                    {
+                        if (User.HasPermissions("BatchDelivery", "Write"))
+                        {
+                            @Html.ActionLink("Export batch as CSV", "DeliveryBatchAsCsv", new { id = Model.Id }, new { @class = "btn btn-default", target = "_blank" })
+                        }
+                    }
+                </div>
+                <span class="clearfix"></span>
+            </div><!--/.panel-footer-->
+        </div><!--/.panel.panel-primary-->
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h3 class="box-title">Refurbs in this batch</h3>
+            </div>
+            <div class="box-body">
+                @{ Html.RenderPartial("_ListDeliveryBatchItems", Model); }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="itemTmpl" type="text/x-jsrender">
+    <tr>
+        <td>{{:Id}}</td>
+        <td>{{:Model}}</td>
+        <td>{{:SerialNumber}}</td>
+        <td>{{:~format(Date)}}</td>
+        <td>{{:UserId}}</td>
+        <td>{{:Origin}}</td>
+        <td>{{:Destination}}</td>
+        <td><a href="javascript:;" data-id="{{:Id}}" class="btn btn-link action">Delete</a></td>
+    </tr>
+</script>
+
+@section Scripts {
+    @Scripts.Render("~/AdminLTE/plugins/lodash/js")
+    @Scripts.Render("~/AdminLTE/plugins/jsrender/js")
+
+    @if (User.HasPermissions("BatchDelivery", "Write"))
+    {
+        <script type="text/javascript">
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            var $snInput = $('#SerialNumber');
+            var $message = $('#Message');
+            var $count = $('#Count');
+            $snInput.focus();
+
+            /** events */
+            $snInput
+                .blur(function () { $snInput.focus(); })
+                .keypress(function (e) {
+                    if (e.which == 13) {
+                        e.preventDefault();
+
+                        $.post('@Url.Action("AddDeliveryBatchItem")',
+                            { id: @Model.Id, sn: $snInput.val() },
+                            function (json) {
+                                $message
+                                    .removeClass('alert-success')
+                                    .removeClass('alert-danger')
+                                    .addClass(json.State === 'added' ? 'alert-success' : 'alert-danger')
+                                    .html(((json.Item && json.Item.SerialNumber) ? json.Item.SerialNumber : $snInput.val())
+                                    + ' - Message: ' + json.Message);
+
+                                if (json.State === 'added') {
+                                    var $tmpl = $.templates('#itemTmpl');
+                                    var html = $tmpl.render(json.Item, {
+                                        format: function (d) {
+                                            return moment(d).format('DD/MM/YYYY HH:mm:ss');
+                                        }
+                                    });
+                                    $('#deliveryBatchItems').prepend(html);
+                                }
+                                $count.text(json.Count);
+                                $snInput.val('');
+                            });
+                    }
+                });
+
+            $(document)
+                .on('click.delivery.action', 'a.action', function (e) {
+                    e.preventDefault();
+
+                    var data = $(this).data();
+                    var index = $('a.action').index(this);
+
+                    $.post('@Url.Action("DeleteDeliveryBatchItem")', data, function (json) {
+                        $message
+                            .removeClass('alert-success')
+                            .removeClass('alert-danger')
+                            .addClass(json.State === 'removed' ? 'alert-success' : 'alert-danger')
+                            .html(json.Item.SerialNumber + ' - Message: ' + json.Message);
+
+                        $count.text(json.Count);
+
+                        if (json.State === 'removed') {
+                            $('#deliveryBatchItems tr:eq(' + index + ')').remove();
+                        }
+                    });
+                })
+
+        });
+
+        </script>
+    }
+}

@@ -1,0 +1,95 @@
+﻿@using WebApplication.Extensions
+@using WebApplication.Attributes
+
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title">Batches</h3>
+    </div>
+    @if (User.HasPermissions("Batch", "Write"))
+    {
+    <div class="box-footer">
+        <input type="button" class="btn btn-primary" value="New" onclick="location.href='@Url.Action("Create", "Batch")'" />
+        <input type="button" class="btn btn-primary" value="Import From Excel" onclick="location.href='@Url.Action("ImportFromExcel", "Batch")'" />
+    </div>
+    }
+    <div class="box-body table-responsive">
+        <table id="batchDataTables" class="table table-bordered table-striped"></table>
+    </div>
+
+    @if (User.HasPermissions("Batch", "Write"))
+    {
+    <div class="box-footer">
+        <input type="button" class="btn btn-primary" value="New" onclick="location.href='@Url.Action("Create", "Batch")'" />
+        <input type="button" class="btn btn-primary" value="Import From Excel" onclick="location.href='@Url.Action("ImportFromExcel", "Batch")'" />
+    </div>
+    }
+</div>
+
+
+<script type="text/javascript">
+    function formatDateString(data) {
+        return moment(data).format('DD/MM/YYYY HH:mm');
+    }
+</script>
+
+<script type="text/x-jsrender" id="idColumn">
+    <a href="@Url.Action("Details", "Batch" )/{{:id}}" class="btn btn-link">
+    <i class="fa fa-search"></i>
+    {{:id}}
+    </a>
+</script>
+<script type="text/x-jsrender" id="isDivergentColumn">
+    <span class="{{:isDivergentCss}}">{{:isDivergent}}</span>
+</script>
+<script type="text/x-jsrender" id="statusColumn">
+    <span class="Status {{:status}}">{{:statusDescription}}</span>
+</script>
+<script type="text/x-jsrender" id="actionColumn">
+    {{if status == 'Conferred'}}
+    @if (User.HasPermissions("Batch", "Write") || User.HasPermissions("Batch", "Delete"))
+    {
+        if (User.HasPermissions("Batch", "Write"))
+        {
+        <a href="@Url.Action("Create")/{{:id}}" class="btn btn-success">Trial</a>
+        }
+        <text>&nbsp;</text>
+        if (User.HasPermissions("Batch", "Delete"))
+        {
+        <a href="@Url.Action("Delete")/{{:id}}" class="btn btn-danger">Cancel</a>
+        }
+    }
+    else
+    {
+        <text>Permission needed to perform any action</text>
+    }
+    {{else status == 'PendingReview'}}
+    @if (User.HasPermissions("BatchConference", "Write") || User.HasPermissions("Batch", "Write"))
+    {
+        if (User.HasPermissions("BatchConference", "Write"))
+        {
+        <a href="@Url.Action("BatchConference")/{{:id}}" class="btn btn-primary">Conference</a>
+        }
+        <text>&nbsp;</text>
+        if (User.HasPermissions("Batch", "Write"))
+        {
+        <a href="@Url.Action("Create")/{{:id}}" class="btn btn-warning">Review</a>
+        }
+    }
+    else
+    {
+        <text>Permission needed to perform any action</text>
+    }
+
+    {{else status == 'Invalid'}}
+    @if (User.HasPermissions("BatchConference", "Write"))
+    {
+    <a href="@Url.Action("BatchConference")/{{:id}}" class="btn btn-primary">Conference</a>
+    }
+    else
+    {
+        <text>Permission needed to perform any action</text>
+        }
+    {{else}}
+    <span>No Actions Allowed</span>
+    {{/if}}
+</script>

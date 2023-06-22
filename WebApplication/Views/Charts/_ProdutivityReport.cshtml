@@ -1,0 +1,159 @@
+﻿<div class="box box-primary">
+    <div class="box-header with-border">
+        <h3 class="box-title">Produtivity <small>along last 15d</small></h3>
+        <div class="text-center">
+            <form class="form-inline" action="#">
+                <div class="form-group">
+                    <div class='input-group date' id="daterange">
+                        <input readonly type='text' class="form-control" />
+                        <span class="input-group-addon" style="cursor: pointer">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button id="filter" type="button" class="btn btn-primary">Filter</button>
+                </div>
+            </form>
+        </div>
+        <div class="box-tools pull-right">
+            <form action='@Url.Action("ProdutivityReportAsCsv")' method="get">
+                @Html.Hidden("StartDate", "")
+                @Html.Hidden("EndDate", "")
+                <button type="submit" target="_blank" class="btn btn-box-tool">
+                    <i class="fa fa-download" aria-hidden="true"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="chart">
+            <canvas id="produtivityReport" style="height: 350px;"></canvas>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var startDate;
+    var endDate;
+
+    function drawChart(data) {
+        var colors = getBaseColors();
+        var $produtivityReport = $('#produtivityReport').get(0).getContext('2d');
+
+        data = _.orderBy(data, 'Date');
+        //var grouped = _.keyBy(data, 'Date');
+        var labels = _.map(data, 'Date');
+        var receivedDisconnection = _.map(data, 'ReceivedDisconnection');
+        var receivedMaintenance = _.map(data, 'ReceivedMaintenance');
+        var deliveredScrap = _.map(data, 'DeliveredScrap');
+        var deliveredMaintenance = _.map(data, 'DeliveredMaintenance');
+        var remaining = _.map(data, 'Remaining');
+
+        var $produtivityReport = new Chart($produtivityReport, {
+            type: 'bar',
+            animation: true,
+            data: {
+                labels: _.map(labels, function (l) { return moment(l).format('D/M') }),
+                datasets: [
+                    {
+                        label: 'Received Disconnection',
+                        data: receivedDisconnection,
+                        borderWidth: 2,
+                        backgroundColor: 'rgba(' + colors[0].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[0].join(',') + ',.8)'
+                    },
+                    {
+                        label: 'Received Maintenance',
+                        data: receivedMaintenance,
+                        borderWidth: 2,
+                        backgroundColor: 'rgba(' + colors[1].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[1].join(',') + ',.8)'
+                    },
+                    {
+                        label: 'Delivered Scrap',
+                        data: deliveredScrap,
+                        borderWidth: 2,
+                        backgroundColor: 'rgba(' + colors[2].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[2].join(',') + ',.8)'
+                    },
+                    {
+                        label: 'Delivered Maintenance',
+                        data: deliveredMaintenance,
+                        borderWidth: 2,
+                        backgroundColor: 'rgba(' + colors[3].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[3].join(',') + ',.8)'
+                    },
+                    //{
+                    //    label: 'In Work',
+                    //    data: working,
+                    //    borderWidth: 2,
+                    //    backgroundColor: 'rgba(' + colors[2].join(',') + ',.5)',
+                    //    borderColor: 'rgba(' + colors[2].join(',') + ',.8)'
+                    //},
+                    {
+                        type: 'line',
+                        fill: false,
+                        label: 'Remaining (cumulative)',
+                        data: remaining,
+                        borderWidth: 2,
+                        backgroundColor: 'rgba(' + colors[14].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[14].join(',') + ',.8)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                labelled: true
+            }
+        });
+    }
+
+    // DateRangePicker Callback
+    function cb(start, end) {
+        $('#daterange input').val(start.format('YYYY/MM/DD') + ' - ' + end.format('YYYY/MM/DD'));
+
+        startDate = start.format('YYYYMMDD');
+        endDate = end.format('YYYYMMDD');
+
+        $("#StartDate").val(start.format('YYYYMMDD'));
+        $("#EndDate").val(end.format('YYYYMMDD'));
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        startDate = moment().subtract(15, 'days').format("YYYYMMDD");
+        endDate = moment().format("YYYYMMDD");
+
+        $.getJSON('@Url.Action("ProdutivityReport", "Charts")', function (data) {
+            drawChart(data);
+        });
+
+        $("#filter").click(function () {
+            var date = $("#daterange input").val;
+            $.getJSON('@Html.Raw(@Url.Action("ProdutivityReport", "Charts", new { StartDate = "start", EndDate = "end" }))'.replace("start", startDate).replace("end", endDate), function (data) {
+                drawChart(data);
+            });
+        });
+
+        $('#daterange').daterangepicker({
+            locale: {
+                format: 'YYYY/MM/DD'
+            },
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(7, 'days'), moment()],
+                'Last 15 Days (Default)': [moment().subtract(15, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(30, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'All': ['@ViewBag.FirstRequestDate', moment()]
+            },
+            startDate: moment().subtract(15, 'days'),
+            endDate: moment(),
+            minDate: '@ViewBag.FirstRequestDate',
+            maxDate: moment()
+        }, cb);
+    });
+</script>

@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "Refurb Requests";
+    ViewBag.SubTitle = "Status: " + ViewBag.Menu;
+}
+
+@section submenu {left-sidebar-menu-refurbs-requests-hold}
+
+<div class="row">
+    <div class="col-xs-12">
+        @RenderPage("~/Views/CosmeticStatus/_List.cshtml")
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/AdminLTE/plugins/jsrender/js")
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            var $cosmeticsStatusDataTables = $('#cosmeticsStatusDataTables').DataTable({
+                serverSide: true,
+                pageLength: 25,
+                searching: false,
+                ajax: {
+                    url: '@Url.Action("PageData")',
+                    type: 'POST',
+                    data: function (data) {
+                        var $status = $('#status');
+                        var params = $status.data();
+                        if (params.filterEnabled == true) {
+                            data.search.value = $status.find('option:selected').val();
+                        } else {
+                            data.search = null;
+                        }
+                    }
+                },
+                columns: [
+                    {
+                        name: 'id',
+                        data: 'id',
+                        title: 'Id',
+                        sortable: true,
+                        searchable: false
+                    },
+                    {
+                        name: 'partNumber',
+                        data: 'partNumber',
+                        title: 'Part Number',
+                        sortable: false,
+                        searchable: false
+                    },
+                    {
+                        name: 'serialNumber',
+                        data: 'serialNumber',
+                        title: 'Serial Number',
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        name: 'userId',
+                        data: 'userId',
+                        title: 'User',
+                        sortable: false,
+                        searchable: true
+                    },
+                    {
+                        name: 'dateRequested',
+                        data: 'dateRequested',
+                        title: 'Date Requested',
+                        sortable: true,
+                        searchable: false,
+                        render: formatDateString
+                    },
+                    {
+                        name: 'statusCosmetic',
+                        data: 'statusCosmetic',
+                        title: 'Cosmetic Status',
+                        sortable: true,
+                        searchable: false
+                    },
+                    {
+                        name: 'status',
+                        data: 'statusCosmetic',
+                        title: 'Actions',
+                        sortable: false,
+                        searchable: false,
+                        render: function (data, type, row) {
+                            return $('#actionColumn').render(row);
+                        }
+                    }
+                ]
+            });
+
+            $(document)
+                .on('click.search.datatables', '#search', function (e) {
+                    e && e.preventDefault();
+                    var $status = $('#status');
+                    $status.data('filterEnabled', true);
+                    $cosmeticsStatusDataTables.ajax.reload(null, true);
+                })
+                .on('click.search.datatables', '#showAll', function (e) {
+                    e && e.preventDefault();
+                    var $status = $('#status');
+                    $status.data('filterEnabled', false);
+                    $cosmeticsStatusDataTables.ajax.reload(null, true);
+                });
+
+        });
+    </script>
+}

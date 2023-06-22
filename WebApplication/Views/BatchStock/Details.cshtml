@@ -1,0 +1,125 @@
+﻿@model IEnumerable<WebApplication.Models.Application.BatchStock>
+@using WebApplication.Attributes;
+
+@{ ViewBag.Title = "Batch Stock";
+}
+
+@using (Html.BeginForm("Details", "BatchStock", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-xs-8">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Filter</h3>
+                </div>
+                <div class="box-body">
+                    <div class="form-inline">
+
+                        <div class="form-group">
+
+                            <input id="nRequest" name="nRequest" type="text" placeholder="Nº Request" class="form-control">
+                        </div>
+                        <input type="submit" name="Action" value="Search" class="btn btn-default" />
+                    </div>
+                </div>
+
+                <div class="box-body">
+                    <div class="form-inline">
+
+                        @Html.ActionLink("Create New Request", "Create", new object { },
+                                new { @class = "btn btn-primary" })
+
+                        @Html.ActionLink("View Stock", "Index", "Model", new object { },
+                                new { @class = "btn btn-primary" })
+
+                        @Html.ActionLink("New Order", "Create", "BatchOrders", new object { },
+                              new { @class = "btn btn-primary" })
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+@if (@ViewBag.Message != null)
+{
+    <div class="row">
+        <div class="col-xs-8">
+            <div class="panel-body">
+                <div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+
+                    <p>
+                        @ViewBag.Message
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@if (User.HasPermissions("Batch", "Read"))
+{
+    <div class="row">
+        <div class="col-xs-8">
+            <div class="box">
+
+                <div class="box-body table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Id)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.NumeroNota)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Date)
+                            </th>
+                            @*<th>
+                                    @Html.DisplayNameFor(model => model.UserId)
+                                </th>*@
+                            <th>Actions</th>
+                        </tr>
+
+
+
+                        @foreach (var item in Model)
+                        {
+
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Id)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.NumeroNota)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Date)
+                                </td>
+                                @*<td>
+                                        @Html.DisplayFor(modelItem => item.UserId)
+                                    </td>*@
+                                <td>
+                                    @Html.ActionLink("New Product", "Create", "BatchProducts", new { id = item.Id }, new { @class = "btn btn-success" })
+                                    @Html.ActionLink("View Items", "_List", "BatchProducts", new { id = item.Id }, new { @class = "btn btn-info" })
+
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,60 @@
+﻿<div class="box box-primary">
+    <div class="box-header with-border">
+        <h3 class="box-title">Aging <small>in days to open requests</small></h3>
+        <div class="box-tools pull-right">
+            <a href="@Url.Action("GroupedAgingReportAsCsv")" target="_blank" class="btn btn-box-tool">
+                <i class="fa fa-download" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="chart">
+            <canvas id="groupedAgingReport" style="height: 450px;"></canvas>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        var colors = getBaseColors();
+        var $groupedAgingReport = $('#groupedAgingReport');
+
+        $.getJSON('@Url.Action("GroupedAgingReport", "Charts")',
+            function (data) {
+
+                var seriesColor = _.take(colors, data.length);
+                
+                var groupedAgingReport = new Chart($groupedAgingReport, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Soma 0-10', 'Soma 11-20', 'Soma 21-30', 'Soma >30', 'Soma >60'],
+                        datasets: [
+                            {
+                                data: _.map(_.values(data[0]), function (i) { return i || 0; }),
+                                backgroundColor: _.map(_.take(colors, 5), function (i) { return 'rgba(' + i.join(',') + ',.5)' }),
+                                borderColor: _.map(_.take(colors, 5), function (i) { return 'rgba(' + i.join(',') + ',.8)' }),
+                                borderWidth: 2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        labelled: true,
+                        legend: {
+                            display: false
+                        },
+                        layout: {
+                            padding: {
+                                top: 20,
+                                right: 15,
+                                bottom: 15,
+                                left: 15
+                            }
+                        },
+                    }
+                });
+            });
+    });
+</script>

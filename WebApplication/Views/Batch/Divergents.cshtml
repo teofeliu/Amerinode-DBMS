@@ -1,0 +1,148 @@
+﻿@{
+    ViewBag.Title = "Batch";
+    ViewBag.SubTitle = "Batches " + ViewBag.Menu;
+}
+
+@section submenu {left-sidebar-menu-batch-divergent}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Find Request</h3>
+            </div>
+            <div class="box-body">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <input id="q" name="q" type="text" class="form-control">
+                    </div>
+                    <button id="search" type="button" class="btn btn-default">Search</button>
+                    <button id="showAll" type="button" class="btn btn-default">Show All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        @RenderPage("~/Views/Batch/_List.cshtml")
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/AdminLTE/plugins/jsrender/js")
+
+    <script type="text/javascript">
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            var $batchDataTables = $('#batchDataTables').DataTable({
+                serverSide: true,
+                pageLength: 25,
+                searching: false,
+                ajax: {
+                    url: '@Html.Raw(Url.Action("PageData", new { @isDivergent = true, @status = ViewBag.Status }))',
+                    type: 'POST',
+                    data: function (data) {
+                        data.search.value = $('#q').val();
+                    }
+                },
+                columns: [
+                    {
+                        name: 'id',
+                        data: 'id',
+                        title: 'ID',
+                        sortable: true,
+                        render: function (value) {
+                            return $('#idColumn').render({ id: value });
+                        }
+                    },
+                    {
+                        name: 'model',
+                        data: 'model',
+                        title: 'Model',
+                        sortable: false
+                    },
+                    {
+                        name: 'received',
+                        data: 'received',
+                        title: 'Received',
+                        sortable: false
+                    },
+                    {
+                        name: 'conferred',
+                        data: 'conferred',
+                        title: 'Conferred',
+                        sortable: false
+                    },
+                    {
+                        name: 'isDivergent',
+                        data: 'isDivergent',
+                        title: 'Is Divergent?',
+                        sortable: false,
+                        render: function (value, type, row) {
+                            return $('#isDivergentColumn').render(row);
+                        }
+                    },
+                    {
+                        name: 'approved',
+                        data: 'approved',
+                        title: 'Approved',
+                        sortable: false
+                    },
+                    {
+                        name: 'disapprovedByFunctionalTest',
+                        data: 'disapprovedByFunctionalTest',
+                        title: 'Disapproved by Function Test',
+                        sortable: false
+                    },
+                    {
+                        name: 'disapprovedByCosmetic',
+                        data: 'disapprovedByCosmetic',
+                        title: 'Disapproved by Comestic',
+                        sortable: false
+                    },
+                    {
+                        name: 'statusDescription',
+                        data: 'statusDescription',
+                        title: 'Status',
+                        sortable: false,
+                        render: function (value, type, row) {
+                            return $('#statusColumn').render(row);
+                        }
+                    },
+                    {
+                        name: 'date',
+                        data: 'date',
+                        title: 'Date',
+                        sortable: true,
+                        render: formatDateString
+                    },
+                    {
+                        name: 'status',
+                        data: 'status',
+                        title: 'Actions',
+                        sortable: false,
+                        render: function (value, type, row) {
+                            return $('#actionColumn').render(row);
+                        }
+                    }
+                ]
+            });
+
+            $(document)
+                .on('click.search.datatables', '#search', function (e) {
+                    e && e.preventDefault();
+                    $batchDataTables.ajax.reload(null, true);
+                })
+                .on('click.search.datatables', '#showAll', function (e) {
+                    e && e.preventDefault();
+                    $('#q').val('');
+                    $batchDataTables.ajax.reload(null, true);
+                });
+
+        });
+
+    </script>
+}

@@ -1,0 +1,50 @@
+﻿@model WebApplication.Models.Application.ScrapBatch
+
+@section submenu {left-sidebar-menu-batch-scrap}
+
+@{
+    ViewBag.Title = "Cancel Scrap";
+    ViewBag.SubTitle = "Batch";
+}
+
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="box box-warning">
+            <div class="box-header with-border">
+                <h3 class="box-title">Please, confirm your action</h3>
+            </div>
+            <div class="box-body">
+                <div class="alert alert-warning">
+                    <h4>
+                        <i class="icon fa fa-question-circle"></i>
+                        Please, get your attention!
+                    </h4>
+                    Are you sure to perform this action and cancel this scrap batch <strong>#@Model.GetCode</strong>?
+                </div><!--/.alert.alert-warning-->
+
+                @if (ViewBag.Message != null)
+                {
+                        <div class="alert alert-danger">
+                            <h4>Error while cancel batch</h4>
+                            @ViewBag.Message
+                        </div><!--/.alert.alert-danger-->
+                }
+            </div><!--/.box-body-->
+            <div class="box-footer">
+                <div class="pull-left">
+                    @Html.ActionLink("Go Back", "CreateScrapBatch", new { id = Model.Id }, new { @class = "btn btn-default" })
+                </div>
+                <div class="pull-right">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.Id)
+                        <button type="submit" class="btn btn-danger">Yes, I am sure</button>
+                    }
+                </div>
+                <span class="clearfix"></span>
+            </div>
+        </div><!--/.box.box-primary-->
+    </div>
+</div>

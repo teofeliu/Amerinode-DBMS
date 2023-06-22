@@ -1,0 +1,71 @@
+﻿@using WebApplication.Attributes
+
+@model WebApplication.Models.Application.Batch
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title">Not found</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Model</th>
+                    <th>Serial Number</th>
+                    <th>Date</th>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="notFoundWrapper"></tbody>
+        </table>
+    </div>
+</div>
+
+
+<script id="notFoundTmpl" type="text/x-jsrender">
+    <tr>
+        <td>{{:Id}}</td>
+        <td>{{:ModelName}}</td>
+        <td>{{:SerialNumber}}</td>
+        <td>{{:~format(Date)}}</td>
+        <td>{{:Origin}}</td>
+        <td>{{:Destination}}</td>
+        <td>
+            <a href="@Url.Action("BatchItemEdit")/{{:Id}}">Review</a>
+            @if (User.HasPermissions("BatchConference", "Write"))
+            {
+                <text>
+                    |
+                    <a href = "@Url.Action("BatchItemDelete", new { id = Model.Id })?itemId={{:Id}}"> Delete </a>
+                </text>
+
+            }
+        </td>
+    </tr>
+</script>
+
+<script type="text/javascript">
+    function refreshNotFoundList() {
+        $.getJSON('@Url.Action("BatchConferenceNotFound", new { Id = Model.Id })',
+            function (data) {
+                var $t = $.templates('#notFoundTmpl');
+                var html = $t.render(data, {
+                    format: function (d) {
+                        return moment(d).format('DD/MM/YYYY HH:mm:ss');
+                    }
+                });
+                $('#notFoundWrapper').html(html);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            refreshNotFoundList();
+        })
+</script>
+

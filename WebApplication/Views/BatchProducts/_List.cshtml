@@ -1,0 +1,117 @@
+﻿@using WebApplication.Models.Application
+@model IEnumerable<WebApplication.Models.Application.BatchProducts>
+
+@{
+    var type = this.PageData["actionName"];
+    var NumeroNota_param = ViewContext.RouteData.Values["id"];
+}
+
+<div class="row">
+    <div class="col-xs-6">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Actions</h3>
+            </div>
+
+            <div class="box-body">
+                @*<div class="form-group">
+            <label class="btn-block">@Html.DisplayNameFor(model => model.BatchStock.NumeroNota)</label>
+            <span>@NumeroNota_param</span>
+        </div>*@
+
+                @Html.ActionLink("Back", "Details", "BatchStock", new object { },
+                              new { @class = "btn btn-default" })
+
+
+                @Html.ActionLink("Insert New Product", "Create", new { id = NumeroNota_param },
+                               new { @class = "btn btn-primary" })               
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-6">
+        <div class="box">
+            <div class="box-body table-responsive">
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Id)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.BatchStock.NumeroNota)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Model.Description)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Stock)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.DateCreate)
+                        </th>
+                    </tr>
+
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BatchStock.NumeroNota)
+                    </td>
+                    <td>
+                        @if (item.Model.Description == "" || item.Model.Description == null)
+                        {
+                            @Html.DisplayFor(modelItem => item.Model.Name)
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.Model.Description)
+
+                        }
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Stock)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateCreate)
+                    </td>
+
+                    @*<td>
+                        @if (item.Stock == 0)
+                        {
+                            @Html.ActionLink("New Order", "Create", "BatchOrders", new { id = item.Id }, new { @class = "btn btn-primary disabled" })
+                        }
+                        else
+                        {
+
+                            @Html.ActionLink("New Order", "Create", "BatchOrders", new { id = item.Id }, new { @class = "btn btn-primary" })
+
+
+                        }
+
+
+                    </td>*@
+                </tr>
+                        }
+                    }
+
+
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+</div>

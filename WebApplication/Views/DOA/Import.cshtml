@@ -1,0 +1,86 @@
+﻿@using WebApplication.Attributes;
+
+@{
+    ViewBag.Title = "Import";
+    ViewBag.SubTitle = "DOA";
+}
+
+@section submenu {left-sidebar-menu-cruds-doa}
+
+<div class="row">
+
+    <div class="col-md-6">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Dead on Arrive</h3>
+            </div>
+            <div class="box-body">
+                <div class="alert alert-warning">
+                    <h4 class="alert-heading">Hey!</h4>
+                    <p>
+                        You must upload a document exactly like this template that is <a href="~/Uploads/doa-input-template.xlsx" class="">here</a>.
+                    </p>
+                    <br />
+                    <p>
+                        Huge files demand a lot of resources and take a long time to process and may cause
+                        processing errors. If you face timeouts or long time to process, please 
+                        <strong>split your file</strong> into small other files. The suggestion is a file with
+                        10.000 max lines.
+                    </p>
+                    <br />
+                    <p>Please, pay attention to <code>END</code> statement at last line of you worksheet.</p>
+                    <br />
+
+                    <p><strong>Do not stop the import request.</strong> It's do not stop the processing in the server after start and you may 
+                        have troubles with retry the import. Wait until process finish or indicates an error.</p>
+                    @*<p class="mb-0">Whenever you need to, be sure to use margin utilities to keep things nice and tidy.</p>*@
+                </div>
+
+                @if (@ViewBag.Message != null)
+                {
+                    <div class="alert alert-danger alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+                        <p>
+                            @ViewBag.Message
+                        </p>
+                    </div>
+                }
+
+                @using (Html.BeginForm("Import", "DOA", FormMethod.Post, new { enctype = "multipart/form-data", onSubmit = "return onFormSubmit()" }))
+                {
+                    <div class="form-group">
+                        <label>Select File</label>
+                        <input type="file" name="file" class="form-control" />
+                    </div>
+                    <div class="box-footer">
+                        <div class="box-btn-group">
+                            <span class="pull-left"></span>
+                            @if (User.HasPermissions("DOA", "Write"))
+                            {
+                            <span class="pull-right">
+                                <input id="doImport" type="submit" class="btn btn-success" value="Import" data-loading-text="Processing..." />
+                            </span>
+                            }
+                            @Html.ActionLink("Go Back", "/", new { }, new { @class = "btn btn-default" })
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+        var onFormSubmit = function () {
+            // disabling the button to avoid duplicate calls while processing
+            var $btn = $('#doImport').button('loading');
+            return true;
+        }
+
+    </script>
+
+    }

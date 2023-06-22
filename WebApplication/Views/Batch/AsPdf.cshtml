@@ -1,0 +1,49 @@
+﻿@model WebApplication.Models.Application.Batch
+
+@{
+    ViewBag.Title = "Conferência em lote";
+    Layout = "~/Views/Shared/_PdfLayout.cshtml";
+}
+
+<p>
+    Este relatório foi gerado automaticamente pelo <strong>Processo de Conferência do Lote</strong> e é 
+    necessário validar e assinar o termo de aceitação sobre as informaçoes declaradas abaixo. 
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Lote nº</th>
+            <th>Status</th>
+            <th>Quantidade</th>
+            <th>Quantidate Desaprovada - Functional Test</th>
+            <th>Quantidate Desaprovada - Cosmetic</th>
+            <th>Quantidate Conferida</th>
+            <th>Data do Relatório</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td># @Model.Id</td>
+            <td>@Model.Status</td>
+            <td>@Model.Quantity</td>
+            <td>@Model.QuantityDisapproved</td>
+            <td>@Model.QuantityDisapprovedByCosmetic</td>
+            <td><strong>@Model.QuantityConferred</strong></td>
+            <td>@DateTime.Now</td>
+        </tr>
+    </tbody>
+</table>
+
+@*<div class="row">
+    <div class="col-xs-5 agreements">
+        <p>Nome Operador Amerinode:</p>
+        <p>Assinatura:</p>
+    </div>
+    <div class="col-xs-offset-1 col-xs-5 agreements">
+        <p>Nome Operador TIM / Parceiro:</p>
+        <p>Assinatura:</p>
+        <p>Data: </p>
+    </div>
+</div>*@
+

@@ -1,0 +1,68 @@
+﻿@model IEnumerable<WebApplication.Models.Application.BatchProducts>
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+
+<div class="row">
+    <div class="col-xs-6">
+        <div class="box">
+            <div class="box-body table-responsive">
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.BatchStock.NumeroNota)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Model.Description)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Stock)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.DateCreate)
+                        </th>
+                        @*<th>
+                                @Html.DisplayNameFor(model => model.UserId)
+                            </th>*@
+                        <th>Actions</th>
+                    </tr>
+
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.BatchStock.NumeroNota)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Model.Description)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Stock)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.DateCreate)
+                                </td>
+
+                                <td>
+                                    @Html.ActionLink("Delete", "Create", "BatchProducts", new { id = item.Id }, new { @class = "btn btn-danger" })
+                                </td>
+                            </tr>
+                        }
+                    }
+
+
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+</div>

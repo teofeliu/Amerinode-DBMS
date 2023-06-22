@@ -1,0 +1,84 @@
+﻿@model WebApplication.Models.Application.BatchOrder
+@using WebApplication.Attributes;
+@{
+    ViewBag.Title = "Orders";
+}
+
+
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="box box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">
+                    Create New Order
+                </h3>
+            </div>
+            <div class="box-body">
+
+                @if (@ViewBag.Message != null)
+                {
+                    <div class="box-body">
+                        <div class="alert alert-danger alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+                            <p>
+                                @ViewBag.Message
+                            </p>
+
+                        </div>
+                    </div>
+                }
+
+
+                @using (Html.BeginForm("Create", "BatchOrders", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+
+                        <hr />
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ModelId, "ModelId", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownList("ModelId", null, htmlAttributes: new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.ModelId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Quantity, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        @Html.HiddenFor(model => model.DateCreate)
+                        @Html.HiddenFor(model => model.UserId)
+
+
+                        @if (User.HasPermissions("Batch", "Write"))
+                        {
+                            <input type="submit" value="Create" class="btn btn-primary pull-right" />
+                        }
+
+                        @Html.ActionLink("Back to List", "Index", new object { },
+                              new { @class = "btn btn-default pull-left" })
+
+
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div>
+
+</div>

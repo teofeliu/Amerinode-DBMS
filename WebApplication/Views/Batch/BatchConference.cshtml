@@ -1,0 +1,192 @@
+﻿@using WebApplication.Attributes
+@model WebApplication.Models.Application.Batch
+
+@{
+    ViewBag.Title = "Batch";
+    ViewBag.SubTitle = "Conference";
+}
+
+
+@section submenu {left-sidebar-menu-batch-create}
+
+<div class="row">
+    <div class="col-md-12 container-fluid ">
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h1 class="">Batch Conference</h1>
+                <p class="">
+                    <strong>Batch Id:</strong> @Model.GetCode()
+                </p>
+            </div>
+            <!--heading-->
+
+            <div class="panel-body">
+
+                <div class="form-horizontal">
+                    @if (User.HasPermissions("BatchConference", "Write"))
+                    {
+                    <div class="form-group">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <label for="SerialNumber">Serial Number</label>
+                            <input type="text" class="form-control input-lg" id="SerialNumber" name="SerialNumber" />
+                        </div>
+                    </div>
+                    }
+
+                    <div class="form-group">
+                        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                            <label>Received:</label>
+                            <span>@Model.Quantity</span>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                            <label>Conferred:</label>
+                            <span id="Conferred">@Model.BatchItemsConferred.Count()</span>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                            <label>Not Found:</label>
+                            <span id="NotFound">@Model.BatchItemsNotFound.Count()</span>
+                        </div>
+
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label>Callback Messages:</label>
+                            <span id="Message" class="alert conference-alert"></span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!--/body-->
+
+            @if (@ViewBag.Message != null)
+            {
+                <div class="panel-body">
+                    <div class="alert alert-danger alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+
+                        <p>
+                            @ViewBag.Message
+                        </p>
+
+                    </div>
+                </div>
+            }
+
+            <div class="panel-footer">
+                <div class="box-btn-group">
+                    <span class="pull-left">
+                        @if (User.HasPermissions("BatchConference", "Delete"))
+                        {
+                            @Html.ActionLink("Cancel This Batch", "Delete", new { id = Model.Id }, new { @class = "btn btn-danger" })
+                        }
+                    </span>
+
+                    <span class="pull-right">
+                        @if (User.HasPermissions("BatchConference", "Write"))
+                        {
+                            using (Html.BeginForm())
+                            {
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <button type="submit" value="Create Requests" class="btn btn-success" id="createRequestsButton" style="display: none;">Create Requests</button>
+                            }
+                        }
+                    </span>
+                    <span class="clearfix"></span>
+                </div>
+
+                @Html.ActionLink("Go Back", "Index", new { }, new { @class = "btn btn-default" })
+            </div>
+            <!--/footer-->
+        </div>
+        <!--panel-->
+        <!--lists-->
+        @{Html.RenderPartial("_NotFoundList", Model);}
+        @{Html.RenderPartial("_ItemsFoundList", Model);}
+        @{Html.RenderPartial("_NotConferredList", Model);}
+    </div>
+    <!--/lists-->
+
+
+</div><!--/.container-fluid-->
+
+
+
+@section Scripts {
+    @Scripts.Render("~/AdminLTE/plugins/lodash/js")
+    @Scripts.Render("~/AdminLTE/plugins/jsrender/js")
+
+    @if (User.HasPermissions("BatchConference", "Write"))
+    {
+        <script>
+        $(function () {
+
+            var $snInput = $("#SerialNumber");
+
+
+            /*best way of doing this*/
+            $snInput
+                .focus()
+                .blur(function () { $snInput.focus(); })
+                .keypress(function (e) {
+                    if (e.which == 13) {
+                        e.preventDefault();
+                        debugger;
+
+                        TryThis($snInput.val());
+                    }
+                });
+
+            function checkIfCreateIsEnabled() {
+                setTimeout(function () {
+                    var $notConfList = $('#notConfWrapper');
+                    var $notFoundList = $('#notFoundWrapper');
+                    var $btn = $('#createRequestsButton');
+
+                    var notConfCount = $notConfList.children().length;
+                    var notFoundCount = $notFoundList.children().length;
+
+                    $btn[(!notConfCount && !notFoundCount) ? 'show' : 'hide']();
+
+                }, 2500);
+            }
+
+            function TryThis(sn) {
+                var $btn = $('#createRequestsButton');
+                $btn.hide();
+
+                $.post('@Url.Action("SNConference", "Batch", new { id = Model.Id })', { sn: sn })
+                    .done(function (data) {
+                        if (!data.Invalid) {
+                            var m = $("#Message");
+                            if (!data.Found) {
+                                m.addClass("alert-danger").removeClass("alert-success");
+                                //$("#SerialNumber").attr("disabled", "disabled");
+                            } else {
+                                m.addClass("alert-success").removeClass("alert-danger");
+                            }
+                            $("#Message").html(data.SerialNumber + " - Conferred: " + data.ConferredVerbal + " - Found: " + data.FoundVerbal);
+                            $("#Conferred").html(data.ConferredCount);
+                            $("#NotFound").html(data.NotFoundCount);
+
+                            refreshNotConferredList && refreshNotConferredList();
+                            refreshItemsFoundList && refreshItemsFoundList();
+                            refreshNotFoundList && refreshNotFoundList();
+
+                            checkIfCreateIsEnabled();
+                        }
+                        $snInput
+                            .val('')
+                            .focus();
+                    });
+
+            }
+            checkIfCreateIsEnabled();
+
+        });
+
+        </script>
+    }
+}

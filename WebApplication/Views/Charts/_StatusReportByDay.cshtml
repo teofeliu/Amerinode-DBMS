@@ -1,0 +1,225 @@
+﻿<div class="box box-primary">
+    <div class="box-header with-border">
+        <h3 class="box-title">Requests <small>along last 30d</small></h3>
+        <div class="text-center">
+            <form class="form-inline" action="#">
+                <div class="form-group">
+                    <div class='input-group date' id="daterangeStatus">
+                        <input readonly type='text' class="form-control" />
+                        <span class="input-group-addon" style="cursor: pointer">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button id="filterStatus" type="button" class="btn btn-primary">Filter</button>
+                </div>
+            </form>
+        </div>
+        <div class="box-tools pull-right">
+            <form action='@Url.Action("StatusReportByDayAsCsv")' method="get">
+                @Html.Hidden("StartDateStatus", "")
+                @Html.Hidden("EndDateStatus", "")
+                <button type="submit" target="_blank" class="btn btn-box-tool">
+                    <i class="fa fa-download" aria-hidden="true"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="chart">
+            <canvas id="statusReportByDay" style="height: 500px;"></canvas>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var startDateStatus;
+    var endDateStatus;
+
+    function drawChartStatus(data) {
+        var colors = getBaseColors();
+        var $statusReportByDayChart = $('#statusReportByDay');
+
+        var labels = _.map(data, 'Date');
+        var received = _.map(data, 'Received');
+        var trialPerformed = _.map(data, 'TrialPerformed');
+        var sentToRepair = _.map(data, 'SentToRepair');
+        var repaired = _.map(data, 'Repaired');
+        var sentToCosmetic = _.map(data, 'SentToCosmetic');
+        var cosmeticPerformed = _.map(data, 'CosmeticPerformed');
+        var sentToScrapEvaluation = _.map(data, 'SentToScrapEvaluation');
+        var sentToScrap = _.map(data, 'SentToScrap');
+        var sentToDOA = _.map(data, 'SentToDOA');
+        var sentToFinalInspection = _.map(data, 'SentToFinalInspection');
+        var finalInspection = _.map(data, 'FinalInspection');
+        var sentToCosmeticHold = _.map(data, 'SentToCosmeticHold');
+        var sentBackToTrial = _.map(data, 'SentBackToTrial');
+        var delivered = _.map(data, 'Delivered');
+
+        var statusReportByDayChart = new Chart($statusReportByDayChart, {
+            type: 'line',
+            data: {
+                labels: _.map(labels, function (d) { return moment(d).format('D/M') }),
+                datasets: [
+                    {
+                        fill: false,
+                        label: 'Received',
+                        data: received,
+                        backgroundColor: 'rgba(' + colors[0].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[0].join(',') + ',.5)'
+                    },
+                    {
+                        fill: false,
+                        label: 'Trial Performed',
+                        data: trialPerformed,
+                        backgroundColor: 'rgba(' + colors[1].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[1].join(',') + ',.5)'
+                    },
+                    {
+                        fill: false,
+                        label: 'Sent to Repair',
+                        data: sentToRepair,
+                        backgroundColor: 'rgba(' + colors[2].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[2].join(',') + ',.5)'
+                    },
+                    {
+                        fill: false,
+                        label: 'Repaired',
+                        data: repaired,
+                        backgroundColor: 'rgba(' + colors[3].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[3].join(',') + ',.5)'
+                    },
+                    {
+                        fill: false,
+                        label: 'Sent to Cosmetic',
+                        data: sentToCosmetic,
+                        backgroundColor: 'rgba(' + colors[4].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[4].join(',') + ',.5)'
+                    },
+                    {
+                        fill: false,
+                        label: 'Cosmetic performed',
+                        data: cosmeticPerformed,
+                        backgroundColor: 'rgba(' + colors[5].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[5].join(',') + ',.5)'
+                    },
+                    {
+                        fill: false,
+                        label: 'Sent to Scrap Evaluation',
+                        data: sentToScrapEvaluation,
+                        backgroundColor: 'rgba(' + colors[6].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[6].join(',') + ',.5)'
+                    },
+                    {
+                        fill: false,
+                        label: 'Sent to Scrap',
+                        data: sentToScrap,
+                        backgroundColor: 'rgba(' + colors[7].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[7].join(',') + ',.5)'
+                    },
+                    {
+                        fill: false,
+                        label: 'Sent to DOA',
+                        data: sentToDOA,
+                        backgroundColor: 'rgba(' + colors[8].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[8].join(',') + ',.5)'
+                    },
+                    {
+                        fill: false,
+                        label: 'Sent to Final Inspection',
+                        data: sentToFinalInspection,
+                        backgroundColor: 'rgba(' + colors[9].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[9].join(',') + ',.5)'
+                    },
+                    {
+                        fill: false,
+                        label: 'Final Inspection',
+                        data: finalInspection,
+                        backgroundColor: 'rgba(' + colors[10].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[10].join(',') + ',.5)'
+                    },
+                    {
+                        fill: false,
+                        label: 'Sent to Cosmetic Hold',
+                        data: sentToCosmeticHold,
+                        backgroundColor: 'rgba(' + colors[11].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[11].join(',') + ',.5)'
+                    },
+                    {
+                        fill: false,
+                        label: 'Sent Back to Trial',
+                        data: sentBackToTrial,
+                        backgroundColor: 'rgba(' + colors[12].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[12].join(',') + ',.5)'
+                    },
+                    {
+                        fill: false,
+                        label: 'Delivered',
+                        data: delivered,
+                        backgroundColor: 'rgba(' + colors[13].join(',') + ',.5)',
+                        borderColor: 'rgba(' + colors[13].join(',') + ',.5)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    fullWidth: true,
+                    position: 'bottom'
+                },
+                layout: {
+                    padding: 15
+                }
+            }
+        });
+    }
+
+    // DateRangePicker Callback
+    function cbStatus(start, end) {
+        $('#daterangeStatus input').val(start.format('YYYY/MM/DD') + ' - ' + end.format('YYYY/MM/DD'));
+
+        startDateStatus = start.format('YYYYMMDD');
+        endDateStatus = end.format('YYYYMMDD');
+
+        $("#StartDateStatus").val(start.format('YYYYMMDD'));
+        $("#EndDateStatus").val(end.format('YYYYMMDD'));
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        startDateStatus = moment().subtract(30, 'days').format("YYYYMMDD");
+        endDateStatus = moment().format("YYYYMMDD");
+
+        $.getJSON('@Url.Action("StatusReportByDay", "Charts")', function (data) {
+            drawChartStatus(data);
+        });
+
+        $("#filterStatus").click(function () {
+            var date = $("#daterangeStatus input").val;
+            $.getJSON('@Html.Raw(@Url.Action("StatusReportByDay", "Charts", new { StartDate = "start", EndDate = "end" }))'.replace("start", startDateStatus).replace("end", endDateStatus), function (data) {
+                drawChartStatus(data);
+            });
+        });
+
+        $('#daterangeStatus').daterangepicker({
+            locale: {
+                format: 'YYYY/MM/DD'
+            },
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(7, 'days'), moment()],
+                'Last 15 Days': [moment().subtract(15, 'days'), moment()],
+                'Last 30 Days (Default)': [moment().subtract(30, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'All': ['@ViewBag.FirstRequestDate', moment()]
+            },
+            startDate: moment().subtract(30, 'days'),
+            endDate: moment(),
+            minDate: '@ViewBag.FirstRequestDate',
+            maxDate: moment()
+        }, cbStatus);
+    });
+</script>

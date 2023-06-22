@@ -1,0 +1,39 @@
+﻿@using WebApplication.Attributes
+@model WebApplication.Models.Application.CosmeticOverview
+
+@{
+    ViewBag.Title = "Delete Cosmetic Overview Item";
+    ViewBag.SubTitle = "";
+}
+@section submenu {left-sidebar-menu-cruds-co}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="box box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Please, confirm your action</h3>
+            </div>
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                <div class="box-body">
+                    <div class="alert alert-warning">
+                        <h4>
+                            <i class="icon fa fa-question-circle fa-2x"></i>
+                            Are you sure you want to delete @Html.DisplayFor(model => model.Name)?
+                        </h4>
+                    </div>
+                </div>
+
+                <div class="box-footer">
+                    @Html.ActionLink("Cancel", "Index", new { }, new { @class = "btn btn-default" })
+                    @if (User.HasPermissions("CosmeticOverview", "Delete"))
+                    {
+                        <input type="submit" value="Yes, Delete It!" class="btn btn-primary pull-right" />
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

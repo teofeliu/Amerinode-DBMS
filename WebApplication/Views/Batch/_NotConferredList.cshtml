@@ -1,0 +1,65 @@
+﻿@using WebApplication.Attributes
+
+@model WebApplication.Models.Application.Batch
+
+<div class="box box-default collapsed-box">
+    <div class="box-header with-border">
+        <h3 class="box-title">Received</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Model</th>
+                    <th>Serial Number</th>
+                    <th>Date</th>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="notConfWrapper"></tbody>
+        </table>
+    </div>
+</div>
+
+
+<script id="notConfTmpl" type="text/x-jsrender">
+    <tr>
+        <td>{{:Id}}</td>
+        <td>{{:ModelName}}</td>
+        <td>{{:SerialNumber}}</td>
+        <td>{{:~format(Date)}}</td>
+        <td>{{:Origin}}</td>
+        <td>{{:Destination}}</td>
+        <td>
+            @if (User.HasPermissions("BatchConference", "Write"))
+            {
+                <a href="@Url.Action("BatchItemDelete", new { id = Model.Id })?itemId={{:Id}}">Delete</a>
+            }
+        </td>
+    </tr>
+</script>
+
+<script type="text/javascript">
+    function refreshNotConferredList() {
+        $.getJSON('@Url.Action("BatchConferenceNotConferred", new { Id = Model.Id })',
+            function (data) {
+                var $t = $.templates('#notConfTmpl');
+                var html = $t.render(data, {
+                    format: function (d) {
+                        return moment(d).format('DD/MM/YYYY HH:mm:ss');
+                    }
+                });
+                $('#notConfWrapper').html(html);
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        refreshNotConferredList();
+    })
+</script>
