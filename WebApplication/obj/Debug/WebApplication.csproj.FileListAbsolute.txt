@@ -1,0 +1,1 @@
+/Users/teofeliu/Documents/WebApplication/WebApplication/obj/Debug/WebApplication.csproj.CoreCompileInputs.cache

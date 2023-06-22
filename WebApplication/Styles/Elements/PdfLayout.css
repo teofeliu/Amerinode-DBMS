@@ -1,0 +1,35 @@
+﻿body {}
+
+body.pdf .header {
+    border-bottom: 2px solid #000;
+}
+
+body.pdf .header h1,
+body.pdf .header h2 {
+    text-align: right;
+}
+
+body.pdf .header img {
+    margin: 20px 0 10px;
+}
+
+body.pdf p {
+    line-height: 2em;
+    margin: 1em 0 .5em;
+    padding-bottom: 3em;
+}
+
+body.pdf p:first-of-type {
+    margin-top: 5em;
+}
+
+body.pdf .table {
+    margin: 5em 0 2em;
+}
+
+body.pdf .table th { font-size: 1.2em; line-height: 1.2em;}
+
+body.pdf .agreements p {
+    border-bottom: 1px solid #000;
+    line-height: 4em;
+}
