@@ -1,5 +1,7 @@
 # README #
 
+Database Management System (DBMS) developed for Amerinode, enabling efficient order and repair management for employees and customers. Contributed to the development of this system during a summer internship in São Paulo, Brazil in 2022.
+
 Encontre dados de producao e teste. Lembre-se sempre que com grandes poderes... o resto você já sabe.
 
 ### Amerinode Refurb ###
